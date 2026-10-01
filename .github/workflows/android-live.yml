@@ -22,6 +22,12 @@ jobs:
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - name: Test configuration state machines
         run: node --test tests/configuration-model.cjs tests/live-wire.cjs
+      - name: Install browser checks
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Check connected-device layout
+        run: node tests/live-ui.cjs
       - name: Build installable configuration preview APK
         run: gradle :app:assembleDebug --no-daemon
       - name: Stage offline signing tools
@@ -37,3 +43,9 @@ jobs:
             app/build/signing-tools/apksigner.jar
             app/build/signing-tools/zipalign
           if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fieldkit-config-ui-${{ github.sha }}
+          path: output/ui-preview/
+          if-no-files-found: ignore
