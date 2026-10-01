@@ -4,11 +4,11 @@ android {
     namespace = "com.dronewukong.fieldtools"
     compileSdk = 35
     defaultConfig {
-        applicationId = "com.dronewukong.fieldtools.config"
+        applicationId = "com.dronewukong.fieldtools"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.4.0-preview"
+        versionCode = 6
+        versionName = "0.4.0"
     }
     sourceSets.getByName("main").assets.srcDir("../source/assets")
     compileOptions {

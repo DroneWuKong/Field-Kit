@@ -17,7 +17,7 @@ if (new URLSearchParams(location.search).get('mode') === 'standalone') {
     ['equipment-profiles','Equipment profiles','Save radio, antenna, video, battery & firmware assumptions','Hardware','identification-card',false],
     ['config-inspector','Configuration inspector','Inspect and compare Betaflight CLI text offline','Hardware','git-diff',false],
     ['connection-doctor','Connection Doctor','Guided USB/network, protocol, telemetry & video diagnosis','Hardware','stethoscope',false],
-    ['configuration-deploy','Configuration workbench','Create templates; read and apply settings to software test drones','Hardware','stack',false],
+    ['configuration-deploy','Configuration workbench','Pull, compare and apply settings on connected flight controllers','Hardware','stack',false],
     ['position-health','Position health','Inspect freshness, accuracy & source disagreement','Field utilities','crosshair',false]
   ];
   toolCatalog.push(...additions);

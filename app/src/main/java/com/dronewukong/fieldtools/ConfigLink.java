@@ -97,12 +97,13 @@ final class ConfigLink {
             }
         return rows.toString();
     }
-    synchronized String openUsb(String id, int baudRate) {
+    synchronized String openUsb(String id, int baudRate) { return openUsb(id, baudRate, false); }
+    synchronized String openUsb(String id, int baudRate, boolean dtr) {
         close();
         if (baudRate < 9600 || baudRate > 3000000) return fail("Invalid baud rate");
         Candidate c = find(id);
         if (c == null) return fail("USB port not found; refresh ports");
-        selected = id; baud = baudRate; generation++;
+        selected = id; baud = baudRate; requestedDtr = dtr; generation++;
         if (!manager.hasPermission(c.driver.getDevice())) {
             waiting = c; state = "permission-pending";
             Intent request = new Intent(permissionAction).setPackage(context.getPackageName())
@@ -112,16 +113,20 @@ final class ConfigLink {
             manager.requestPermission(c.driver.getDevice(), intent);
             return status();
         }
-        try { open(c); return status(); }
+        try { open(c, dtr); return status(); }
         catch (Exception e) { close(); return fail("USB open: " + e.getMessage()); }
     }
-    private void open(Candidate candidate) throws IOException {
+    private boolean requestedDtr;
+    private void open(Candidate candidate) throws IOException { open(candidate, requestedDtr); }
+    private void open(Candidate candidate, boolean dtr) throws IOException {
         UsbSerialPort next = candidate.driver.getPorts().get(candidate.index);
         android.hardware.usb.UsbDeviceConnection connection = manager.openDevice(candidate.driver.getDevice());
         if (connection == null) throw new IOException("Android could not open USB port");
         try {
             next.open(connection);
             next.setParameters(baud, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE);
+            if (dtr) next.setDTR(true);
+            requestedDtr = dtr;
             port = next; state = "connected"; error = "";
         } catch (Exception e) { next.close(); connection.close(); throw new IOException("Serial port setup failed", e); }
     }
@@ -176,7 +181,7 @@ final class ConfigLink {
         generation++; waiting = null;
         try { if (port != null) port.close(); } catch (Exception ignored) { }
         if (socket != null) socket.close();
-        port = null; socket = null; peer = null; peerPort = 0; peerLocked = false; selected = ""; state = "closed"; error = "";
+        port = null; socket = null; peer = null; peerPort = 0; peerLocked = false; requestedDtr = false; selected = ""; state = "closed"; error = "";
     }
     void destroy() { close(); context.unregisterReceiver(receiver); }
 }

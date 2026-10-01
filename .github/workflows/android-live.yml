@@ -26,9 +26,9 @@ jobs:
         run: |
           npm ci
           npx playwright install --with-deps chromium
-      - name: Check connected-device layout
+      - name: Check full-app and connected-device layout
         run: node tests/live-ui.cjs
-      - name: Build installable configuration preview APK
+      - name: Build installable Field Kit APK
         run: gradle :app:assembleDebug --no-daemon
       - name: Stage offline signing tools
         run: |
@@ -37,7 +37,7 @@ jobs:
           cp "$ANDROID_HOME/build-tools/35.0.0/zipalign" app/build/signing-tools/
       - uses: actions/upload-artifact@v4
         with:
-          name: fieldkit-config-preview-${{ github.sha }}
+          name: prismo-field-kit-${{ github.sha }}
           path: |
             app/build/outputs/apk/debug/app-debug.apk
             app/build/signing-tools/apksigner.jar

@@ -40,12 +40,18 @@ const out=path.resolve(__dirname,'../output/ui-preview');fs.mkdirSync(out,{recur
     if(!f.startsWith(root+path.sep)||!fs.existsSync(f))return route.fulfill({status:404});
     return route.fulfill({path:f,contentType:({'.js':'application/javascript','.html':'text/html','.css':'text/css','.json':'application/json','.woff2':'font/woff2'})[path.extname(f)]});
    });
-   await page.goto('https://appassets.androidplatform.net/assets/tools/tools_offline.html?mode=standalone&configPreview=1#configuration-deploy');
+   await page.goto('https://appassets.androidplatform.net/assets/tools/tools_offline.html?mode=standalone#home');
+   assert.equal(await page.locator('#kit-home').isVisible(),true);
+   assert.equal(await page.locator('#kit-bottom-nav').isVisible(),true);
+   assert.equal(await page.locator('.kit-task').count(),4);
+   assert.equal(await page.locator('#tool-list .tool-choice').count(),21);
+   if(width===393)await page.screenshot({path:path.join(out,'full-app-home-393.png'),fullPage:true});
+   await page.evaluate(()=>showTool('configuration-deploy',true));
    await page.locator('#kit-deploy-connected').click();
    assert.equal(await page.locator('#kit-deploy-connect').isVisible(),true);
    assert.equal(await page.locator('#kit-deploy-port option').count(),1);
    assert.equal(await page.locator('#kit-deploy-run').isDisabled(),true);
-   assert.equal(await page.locator('#kit-bottom-nav').isHidden(),true);
+   assert.equal(await page.locator('#kit-bottom-nav').isVisible(),true);
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
    await page.screenshot({path:path.join(out,`connected-${width}.png`),fullPage:true});
    if(width===393){
