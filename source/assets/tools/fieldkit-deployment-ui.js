@@ -1,5 +1,6 @@
 'use strict';
 if(new URLSearchParams(location.search).get('mode')==='standalone')document.addEventListener('DOMContentLoaded',()=>{
+ if(new URLSearchParams(location.search).get('configPreview')==='1')document.body.classList.add('kit-config-preview');
  const K=FieldKit,D=FieldKitDeployment,{el,esc}=K;
  let adapter=new D.PracticeAdapter('betaflight'),preview=null,report=null,busy=false,abort=null,revision=0;
  let connected=false,connectedSnapshot=null,link=null,portId='',portBaud=115200;

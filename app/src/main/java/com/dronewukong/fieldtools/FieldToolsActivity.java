@@ -32,7 +32,7 @@ import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 
 public final class FieldToolsActivity extends Activity {
-    private static final String URL = "https://appassets.androidplatform.net/assets/tools/tools_offline.html?mode=standalone#configuration-deploy";
+    private static final String URL = "https://appassets.androidplatform.net/assets/tools/tools_offline.html?mode=standalone&configPreview=1#configuration-deploy";
     private static final int PICK_FILE = 42, SAVE_FILE = 43;
     private WebView web;
     private ConfigLink link;
