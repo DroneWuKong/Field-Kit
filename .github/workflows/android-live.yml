@@ -14,7 +14,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
@@ -22,8 +21,8 @@ jobs:
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - name: Test configuration state machines
         run: node --test tests/configuration-model.cjs tests/live-wire.cjs
-      - name: Build unsigned native APK
-        run: gradle :app:assembleRelease --no-daemon
+      - name: Build installable configuration preview APK
+        run: gradle :app:assembleDebug --no-daemon
       - name: Stage offline signing tools
         run: |
           mkdir -p app/build/signing-tools
@@ -31,9 +30,9 @@ jobs:
           cp "$ANDROID_HOME/build-tools/35.0.0/zipalign" app/build/signing-tools/
       - uses: actions/upload-artifact@v4
         with:
-          name: fieldkit-unsigned-${{ github.sha }}
+          name: fieldkit-config-preview-${{ github.sha }}
           path: |
-            app/build/outputs/apk/release/app-release-unsigned.apk
+            app/build/outputs/apk/debug/app-debug.apk
             app/build/signing-tools/apksigner.jar
             app/build/signing-tools/zipalign
           if-no-files-found: error

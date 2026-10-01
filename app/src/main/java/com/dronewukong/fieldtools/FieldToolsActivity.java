@@ -32,7 +32,7 @@ import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 
 public final class FieldToolsActivity extends Activity {
-    private static final String URL = "https://appassets.androidplatform.net/assets/tools/tools_offline.html?mode=standalone";
+    private static final String URL = "https://appassets.androidplatform.net/assets/tools/tools_offline.html?mode=standalone#configuration-deploy";
     private static final int PICK_FILE = 42, SAVE_FILE = 43;
     private WebView web;
     private ConfigLink link;
@@ -118,7 +118,7 @@ public final class FieldToolsActivity extends Activity {
     }
 
     private final class Bridge {
-        @JavascriptInterface public String getAppVersion() { return "0.4.0"; }
+        @JavascriptInterface public String getAppVersion() { return "0.4.0-preview"; }
         @JavascriptInterface public String listConfigPorts() { return link.list(); }
         @JavascriptInterface public String openConfigUsb(String id, int baud) { return link.openUsb(id, baud); }
         @JavascriptInterface public String openConfigUdp(int port) { return link.openUdp(port); }
