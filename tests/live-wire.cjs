@@ -32,3 +32,12 @@ test('hardware mode requires a real adapter and never uses PracticeAdapter',asyn
  await assert.rejects(D.run({template:{},adapter:{mode:'hardware',verified:false},targets:['unit'],ledger:{save:async()=>{}}}),/verified physical/);
  assert.throws(()=>new D.NativeAdapter(),/not implemented/);
 });
+test('hardware response without persistence proof is labeled active readback',async()=>{
+ const D=globalThis.FieldKitDeployment;
+ const before=D.demo('px4')[0];before.uid='MAV-4d2';before.evidence='hardware';
+ const adapter={mode:'hardware',verified:true,read:async()=>structuredClone(before),write:async(uid,change)=>{before.entries[change.key].value=change.after;return {uid,key:change.key,value:change.after};},commit:async uid=>({uid,persisted:false,reconnected:true})};
+ const t=D.makeTemplate({name:'Test',stack:'px4',board:before.board,firmware:before.firmware,text:'MPC_XY_VEL_MAX 6'});
+ const snapshots=[];const report=await D.run({template:t,adapter,targets:[before.uid],ledger:{save:async r=>snapshots.push(structuredClone(r))}});
+ assert.equal(report.state,'finished');assert.equal(report.evidence,'hardware');assert.equal(report.units[0].state,'verified-active');assert.equal(report.units[0].persistence,'unconfirmed');
+ assert.equal(snapshots.findIndex(r=>r.units[0]?.backup),0);
+});
