@@ -1,10 +1,11 @@
-# Connected configuration preview
+# Field Kit 0.4.0 connected configuration
 
-This is a separate Android package, `com.dronewukong.fieldtools.config`, so it
-can be tested alongside the existing Field Kit installation. Its first screen
-is Configuration workbench. Select **Connected device**, choose USB serial or
-MAVLink UDP, and tap **Connect and read**. Practice remains available for a
-software-only rehearsal of the same workflow.
+This is part of the full Android package, `com.dronewukong.fieldtools`. It opens
+on Home with all 21 tools and updates the existing 0.3.2 app when signed with
+the same development certificate. Open **Tools**, choose **Configuration
+workbench**, select **Connected device**, choose USB serial or MAVLink UDP, and
+tap **Connect and read**. Practice remains available as an explicitly labeled
+software rehearsal of the workflow.
 
 The connected path sends actual bytes to a selected transport. Betaflight uses
 the CLI for a raw `dump all`, reviewed setting commands, `save`, reconnect and
@@ -40,15 +41,16 @@ The web report uses the evidence label `hardware` only for the connected path.
   capability is missing, the operator can select the encoding explicitly.
   A controller UID or UID2 identifies the aircraft when available; otherwise
   the operator enters an asset serial. The report records that distinction.
-- MAVLink `PARAM_SET` is followed by a full fresh read, but this preview does
+- MAVLink `PARAM_SET` is followed by a full fresh read, but this build does
   not prove persistence through power cycling. Such a run is labeled
   `verified-active`, not a durable saved configuration.
-- Signed MAVLink sessions need key handling, which this preview does not yet
+- Signed MAVLink sessions need key handling, which this build does not yet
   provide. Multiple physical controllers are processed by reconnecting and
   reviewing one at a time; there is no unattended USB batch queue.
-- The separate preview shell does not carry over every native diagnostic API
-  from the installed 0.3.2 app. Continue using that app for live Connection
-  Doctor tests until the native modules are consolidated.
+- The full app includes the previous calculators and planners, saved equipment
+  and checks, phone location, passive USB/UDP Connection Doctor receive, and
+  TCP reachability probing. Configuration and diagnostics intentionally share
+  one physical link so two parts of the app cannot write to the same port.
 
 These are engineering limits, not a license or user-role lock. The Practice
 adapter is explicit and never substitutes for a failed hardware connection.
