@@ -151,10 +151,10 @@
   constructor(){fail('LIVE_CONFIG_WRITE_GATE: native configuration transport is not implemented in this Android build. Use Practice.');}
  }
  async function run({template,adapter,targets,ledger,signal,expected,job={},onProgress=()=>{}}){
-  if(adapter.mode!=='simulation')fail('LIVE_CONFIG_WRITE_GATE: physical writes are unavailable');
+  if(adapter.mode!=='simulation' && !(adapter.mode==='hardware' && adapter.verified===true))fail('No verified physical configuration adapter');
   if(!Array.isArray(targets)||!targets.length||new Set(targets).size!==targets.length||targets.length>50)fail('Choose 1-50 distinct drones');
   if(String(job.batch||'').length>80||String(job.operator||'').length>80)fail('Batch and operator names must be under 80 characters');
-  const report={job:{batch:String(job.batch||''),operator:String(job.operator||'')},schema:'prismo.configuration-run.v1',evidence:'simulation',createdAt:new Date().toISOString(),template:clone(template),units:[],state:'running'};
+  const report={job:{batch:String(job.batch||''),operator:String(job.operator||'')},schema:'prismo.configuration-run.v1',evidence:adapter.mode==='hardware'?'hardware':'simulation',createdAt:new Date().toISOString(),template:clone(template),units:[],state:'running'};
   for(const uid of targets){
    const unit={uid,state:'reading',attempted:[],verified:[],kept:[],backup:null,errors:[]};report.units.push(unit);
    const cancel=()=>{if(signal?.aborted)fail('Run stopped. Read this drone again before another attempt.');};
@@ -170,12 +170,12 @@
      const ack=await adapter.write(uid,change);
      if(ack.uid!==uid||ack.key!==change.key||ack.value!==change.after)fail('Write response does not match '+change.key);
     }
-    if(p.changes.length){cancel();const saved=await adapter.commit(uid);if(saved.uid!==uid||saved.persisted!==true||saved.reconnected!==true)fail('Save/reconnect not confirmed');}
+    if(p.changes.length){cancel();const saved=await adapter.commit(uid);if(saved.uid!==uid||saved.reconnected!==true)fail('Save/reconnect not confirmed');unit.persistence=saved.persisted===true?'confirmed':'unconfirmed';}
     cancel();const after=await adapter.read(uid);validateSnapshot(after);
     if(after.uid!==uid||after.stack!==before.stack||after.board!==before.board||after.firmware!==before.firmware||after.systemId!==before.systemId||after.componentId!==before.componentId||after.encoding!==before.encoding)fail('Identity changed during readback');
     for(const c of p.changes){if(after.entries[c.key]?.value!==c.after)fail('Readback differs for '+c.key);unit.verified.push(c.key);}
     const changed=new Set(p.changes.map(c=>c.key));for(const [key,entry] of Object.entries(before.entries)){if(!changed.has(key)&&JSON.stringify(after.entries[key])!==JSON.stringify(entry))fail('Untouched setting changed: '+key);}
-    unit.state=p.changes.length?'verified':'no-changes';unit.after=after;unit.afterHash=await digest(stable(after));
+    unit.state=p.changes.length?(unit.persistence==='unconfirmed'?'verified-active':'verified'):'no-changes';unit.after=after;unit.afterHash=await digest(stable(after));
     await ledger.save(clone(report));onProgress(clone(report));
    }catch(e){unit.state=unit.attempted.length?'incomplete':'blocked';unit.errors.push(e.message);report.state='stopped';try{await ledger.save(clone(report));}catch(storage){unit.errors.push('Report could not be saved: '+storage.message);}onProgress(clone(report));break;}
   }
