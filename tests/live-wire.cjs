@@ -37,7 +37,7 @@ test('missing MAVLink UID and encoding use explicit operator entries with proven
 test('hardware mode requires a real adapter and never uses PracticeAdapter',async()=>{
  const D=globalThis.FieldKitDeployment;
  await assert.rejects(D.run({template:{},adapter:{mode:'hardware',verified:false},targets:['unit'],ledger:{save:async()=>{}}}),/verified physical/);
- assert.throws(()=>new D.NativeAdapter(),/not implemented/);
+ assert.equal(D.NativeAdapter,undefined);
 });
 test('hardware response without persistence proof is labeled active readback',async()=>{
  const D=globalThis.FieldKitDeployment;
@@ -52,10 +52,10 @@ test('Betaflight CLI pulls a dump, applies a reviewed setting, and reconnects af
  let channel=1,reconnects=0;const writes=[];
  const peer={queue:[],async write(b){const cmd=new TextDecoder().decode(b).trim();writes.push(cmd);
   if(cmd==='save'){channel=2;return;}
-  const body=cmd==='#'?'CLI entered':cmd==='status'?'Arming disable flags: CLI':cmd==='version'?'# Betaflight / STM32F405 (S405) 4.5.2':cmd==='dump all'?'# Betaflight / STM32F405 (S405) 4.5.2\nboard_name DEMO_F405\nset vtx_channel = '+channel:'set vtx_channel = 2';
+  const body=cmd==='#'?'CLI entered':cmd==='status'?'Arming disable flags: CLI':cmd==='version'?'# Betaflight / STM32F405 (S405) 4.5.2':cmd==='dump all'?'# Betaflight / STM32F405 (S405) 4.5.2\nboard_name DEMO_F405\nunknown_future_command foo\nset vtx_channel = '+channel:'set vtx_channel = 2';
   this.queue.push(new TextEncoder().encode(body+'\r\n# '));},async read(){return this.queue.shift()||new Uint8Array();},async reconnectUsb(){reconnects++;}};
  const adapter=new L.BetaflightAdapter(peer,'DEMO-1','usb:demo',115200,'DEMO-USB');
- const before=await adapter.read();assert.equal(before.entries['set vtx_channel'].value,'1');
+ const before=await adapter.read();assert.equal(before.entries['set vtx_channel'].value,'1');assert.match(before.rawDump,/unknown_future_command/);assert.equal(before.unparsedLines.length,1);
  const ack=await adapter.write(before.uid,{key:'set vtx_channel',after:'2'});assert.equal(ack.value,'2');
  const committed=await adapter.commit(before.uid);assert.equal(committed.reconnected,true);assert.equal(reconnects,1);
  const after=await adapter.read(before.uid);assert.equal(after.entries['set vtx_channel'].value,'2');

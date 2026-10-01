@@ -30,9 +30,11 @@ The web report uses the evidence label `hardware` only for the connected path.
 - The native build and software protocol peers pass CI. A physical Betaflight,
   ArduPilot or PX4 board has not yet been used for validation here. Real
   behavior depends on the board's serial implementation, firmware and link.
-- Betaflight raw dumps can always be exported after CLI read. The comparison
-  and apply parser supports a reviewed command subset; an unsupported command
-  stops the comparison instead of sending it. `save` reboots the controller;
+- Betaflight raw dumps can be exported after CLI read. The comparison
+  and apply parser supports a reviewed command subset; extra lines from the
+  controller are retained in the raw backup but not offered as editable
+  settings. Unsupported commands in an imported template stop the comparison.
+  `save` reboots the controller;
   the app tries to reconnect to the same USB serial and re-read it.
 - MAVLink parameter values are encoded using the reported capability. If that
   capability is missing, the operator can select the encoding explicitly.

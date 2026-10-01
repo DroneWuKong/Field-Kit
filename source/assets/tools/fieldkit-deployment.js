@@ -1,9 +1,6 @@
 'use strict';
-// Hardware boundary: current Android package has receive-only native adapters.
-// Simulation does not require or open a USB/network device. Never silently route
-// a physical-device request to the simulator.
+// The practice adapter is explicit. Connected transports live in fieldkit-live.js.
 (function(root){
- const LIVE_CONFIG_WRITE_GATE=false;
  const clone=x=>JSON.parse(JSON.stringify(x));
  const stacks=new Set(['betaflight','ardupilot','px4']);
  const fail=m=>{throw Error(m);};
@@ -36,12 +33,12 @@
   if(stack==='ardupilot')return /^(?:SYSID_THISMAV|CAN_P\d+_NODE_ID|INS_|COMPASS_|RC\d+_(?:MIN|MAX|TRIM)$|BATT\d*_(?:VOLT_MULT|AMP_PERVLT|AMP_OFFSET)$)/.test(key);
   return /^(?:CAL_|TC_|SENS_(?:BOARD|DPRES)_|MAV_SYS_ID$|MAV_COMP_ID$|UAVCAN_NODE_ID$|RC\d+_(?:MIN|MAX|TRIM|DZ)$)/.test(key);
  }
- function parse(stack,text){
+ function parse(stack,text,{readDump=false}={}){
   if(!stacks.has(stack))fail('Choose Betaflight, ArduPilot or PX4');
-  if(typeof text!=='string'||text.length>250000||text.includes('\0'))fail('Configuration text must be under 250 KB and contain no NULs');
+  if(typeof text!=='string'||text.length>(readDump?300000:250000)||text.includes('\0'))fail('Configuration text is too large or contains NULs');
   const entries=Object.create(null),warnings=[];let board='',firmware='',scope='',fileScope=null;
   function add(key,v,type=null){
-   if(Object.hasOwn(entries,key))fail('Duplicate setting '+key);
+   if(Object.hasOwn(entries,key)&&!readDump)fail('Duplicate setting '+key);
    if(Object.keys(entries).length>=4000)fail('Too many settings');
    entries[key]={value:v,type};
   }
@@ -60,7 +57,7 @@
     const set=line.match(/^set\s+([a-z][a-z0-9_]*)\s*=\s*(.+)$/);
     if(set){add(scope+'set '+set[1],set[2].trim());continue;}
     const v=line.match(/^(resource|serial|vtxtable|aux|feature|map|rxrange|rxfail|mixer|mmix|smix|servo|led|color|mode_color|adjrange|beeper|timer|dma|pinio|osd_layout)\s+(.+)$/);
-    if(!v)fail('Unsupported Betaflight command on line '+(i+1)+': '+line);
+    if(!v){if(readDump){warnings.push('Unparsed dump line '+(i+1)+': '+line);continue;}fail('Unsupported Betaflight command on line '+(i+1)+': '+line);}
     const words=v[2].split(/\s+/);let key,setting;
     if(v[1]==='feature'||v[1]==='beeper'){key=v[1]+' '+words[0].replace(/^-/,'');setting=words[0].startsWith('-')?'OFF':'ON';}
     else if(v[1]==='map'||v[1]==='mixer'){key=v[1];setting=v[2];}
@@ -114,7 +111,7 @@
   }
   return {uid:snapshot.uid,changes,kept,unchanged,errors};
  }
- function stable(s){return JSON.stringify([s.uid,s.stack,s.board,s.firmware,s.armed,s.complete,s.systemId,s.componentId,s.encoding,Object.entries(s.entries).sort(([a],[b])=>a.localeCompare(b))]);}
+ function stable(s){return JSON.stringify([s.uid,s.stack,s.board,s.firmware,s.armed,s.complete,s.systemId,s.componentId,s.encoding,s.rawDump||'',Object.entries(s.entries).sort(([a],[b])=>a.localeCompare(b))]);}
  async function digest(text){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
  function exportText(s){
   if(s.stack==='betaflight'){
@@ -147,9 +144,6 @@
   }
   async commit(uid){this.commits.push(uid);if(this.fault==='readback'){const s=this.drones.find(s=>s.uid===uid);s.entries[this.writes.find(w=>w.uid===uid).key].value='STALE';}return {uid,persisted:true,reconnected:true};}
  }
- class NativeAdapter{
-  constructor(){fail('LIVE_CONFIG_WRITE_GATE: native configuration transport is not implemented in this Android build. Use Practice.');}
- }
  async function run({template,adapter,targets,ledger,signal,expected,job={},onProgress=()=>{}}){
   if(adapter.mode!=='simulation' && !(adapter.mode==='hardware' && adapter.verified===true))fail('No verified physical configuration adapter');
   if(!Array.isArray(targets)||!targets.length||new Set(targets).size!==targets.length||targets.length>50)fail('Choose 1-50 distinct drones');
@@ -181,6 +175,6 @@
   }
   if(report.state==='running')report.state='finished';await ledger.save(clone(report));return report;
  }
- const api={LIVE_CONFIG_WRITE_GATE,fingerprint:stable,parse,makeTemplate,plan,value,paramValueBytes,keepPerDrone,exportText,demo,example,PracticeAdapter,NativeAdapter,run,clone};
+ const api={fingerprint:stable,parse,makeTemplate,plan,value,paramValueBytes,keepPerDrone,exportText,demo,example,PracticeAdapter,run,clone};
  root.FieldKitDeployment=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(globalThis);
