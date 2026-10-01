@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Configuration practice run</title></head><body><h1>Configuration practice run</h1><p>SOFTWARE SIMULATION · No physical drone was configured.</p><p>Practice px4 setup · Operator not entered · 2026-10-01T18:30:16.029Z · stopped</p><h2>PRACTICE-px4-1 · incomplete</h2><p>Verified settings: 0; attempted: 2</p><p>Readback differs for MPC_XY_VEL_MAX</p><details><summary>Before backup and result</summary><pre>{
+  "uid": "PRACTICE-px4-1",
+  "state": "incomplete",
+  "attempted": [
+    "MPC_XY_VEL_MAX",
+    "MC_ROLLRATE_P"
+  ],
+  "verified": [],
+  "kept": [
+    "MAV_SYS_ID",
+    "CAL_MAG0_XOFF"
+  ],
+  "backup": {
+    "uid": "PRACTICE-px4-1",
+    "serial": "DEMO-1",
+    "stack": "px4",
+    "board": "DEMO_FMU",
+    "firmware": "1.15.4",
+    "armed": false,
+    "complete": true,
+    "evidence": "simulation",
+    "systemId": 1,
+    "componentId": 1,
+    "encoding": "bytewise",
+    "entries": {
+      "MPC_XY_VEL_MAX": {
+        "value": 5,
+        "type": 9,
+        "min": 0,
+        "max": 20
+      },
+      "MC_ROLLRATE_P": {
+        "value": 0.15000000596046448,
+        "type": 9,
+        "min": 0,
+        "max": 1
+      },
+      "MAV_SYS_ID": {
+        "value": 1,
+        "type": 6
+      },
+      "CAL_MAG0_XOFF": {
+        "value": 0.20000000298023224,
+        "type": 9
+      }
+    }
+  },
+  "errors": [
+    "Readback differs for MPC_XY_VEL_MAX"
+  ],
+  "preview": {
+    "uid": "PRACTICE-px4-1",
+    "changes": [
+      {
+        "key": "MPC_XY_VEL_MAX",
+        "before": 5,
+        "after": 6,
+        "type": 9
+      },
+      {
+        "key": "MC_ROLLRATE_P",
+        "before": 0.15000000596046448,
+        "after": 0.1599999964237213,
+        "type": 9
+      }
+    ],
+    "kept": [
+      "MAV_SYS_ID",
+      "CAL_MAG0_XOFF"
+    ],
+    "unchanged": [],
+    "errors": []
+  },
+  "backupHash": "e664deee55a38456fd1e0c4be6bdd1265afede60d0e960daf09edddc45778c48"
+}</pre></details><details><summary>Template</summary><pre>{
+  "schema": "prismo.configuration-template.v1",
+  "name": "Practice px4 setup",
+  "stack": "px4",
+  "board": "DEMO_FMU",
+  "firmware": "1.15.4",
+  "entries": {
+    "MPC_XY_VEL_MAX": {
+      "value": 6,
+      "type": 9
+    },
+    "MC_ROLLRATE_P": {
+      "value": 0.1599999964237213,
+      "type": 9
+    },
+    "MAV_SYS_ID": {
+      "value": 99,
+      "type": 6
+    },
+    "CAL_MAG0_XOFF": {
+      "value": 999,
+      "type": 9
+    }
+  },
+  "warnings": [],
+  "sourceText": "1\t1\tMPC_XY_VEL_MAX\t6\t9\n1\t1\tMC_ROLLRATE_P\t0.16\t9\n1\t1\tMAV_SYS_ID\t99\t6\n1\t1\tCAL_MAG0_XOFF\t999\t9\n"
+}</pre></details></body></html>

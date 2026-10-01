@@ -1,0 +1,102 @@
+'use strict';
+// Standalone presentation layer. Move existing controls; retain their models and handlers.
+if(new URLSearchParams(location.search).get('mode')==='standalone') {
+  window.addEventListener('fieldkit-ready',()=>{
+    const K=FieldKit,{el,esc}=K,W=K.workspace;
+    const aliases={range:'Estimate radio range',fresnel:'Check path clearance',dipole:'Antenna length',coordinates:'Convert coordinates',battery:'Estimate battery time','signal-check':'Check signal readings','field-checklist':'Bench notes','equipment-profiles':'My equipment','connection-doctor':'Check a connection','config-inspector':'Inspect a configuration','position-health':'Check position'};
+    const intros={range:'Start with frequency and power. Review radio details for the range estimate.',fresnel:'Check the clear space needed around a radio path.',coordinates:'Enter a location, or use your phone. Copy it in the format you need.',battery:'Enter capacity and average current to estimate usable time.','signal-check':'Compare your measured RSSI and packet quality with receiver sensitivity.','equipment-profiles':'Save your equipment once and reuse its calculator inputs.','connection-doctor':'Choose a cable or network. We’ll show the next thing to check.','config-inspector':'Paste your Betaflight configuration to identify the board and settings.','position-health':'Check where a position came from and how old it is.','field-checklist':'Keep a record of what you checked and what is still unresolved.'};
+    for(const [id,title] of Object.entries(aliases)){
+      const t=toolCatalog.find(t=>t[0]===id);if(t)t[1]=title;
+      const section=el('tool-'+id),header=section.querySelector('.tool-header'),desc=header.querySelector('.tool-desc');
+      const full=desc.textContent;header.querySelector('.tool-title').textContent=title;
+      if(intros[id])desc.textContent=intros[id];
+      const guide=document.createElement('details');guide.className='kit-help';guide.innerHTML='<summary>How to use this</summary><p></p>';guide.querySelector('p').textContent=full;header.append(guide);
+      const choice=document.querySelector(`#tool-list [data-tool="${id}"]`);if(choice){choice.querySelector('strong').textContent=title;choice.dataset.search+=' '+title.toLowerCase()+(id==='connection-doctor'?' cable usb wifi wi-fi ethernet not connecting troubleshooting':id==='coordinates'?' gps location mgrs decimal degrees':id==='equipment-profiles'?' drone setup battery radio saved':'');}
+    }
+    document.querySelector('#open-tools').lastChild.textContent='Search';
+    const back=document.createElement('button');back.id='kit-explicit-back';back.className='icon-button';back.setAttribute('aria-label','Back to home');back.innerHTML='<i class="ph ph-arrow-left" aria-hidden="true"></i>';back.onclick=fieldKitHome;document.querySelector('.app-toolbar').prepend(back);
+    const nav=document.createElement('nav');nav.id='kit-bottom-nav';nav.setAttribute('aria-label','Main navigation');nav.innerHTML='<button id="kit-nav-home"><i class="ph ph-house" aria-hidden="true"></i><span>Home</span></button><button id="kit-nav-equipment"><i class="ph ph-cpu" aria-hidden="true"></i><span>Equipment</span></button><button id="kit-nav-checks"><i class="ph ph-clipboard-text" aria-hidden="true"></i><span>Saved checks</span></button><button id="kit-nav-tools"><i class="ph ph-squares-four" aria-hidden="true"></i><span>Tools</span></button>';document.body.append(nav);
+    el('kit-nav-home').onclick=fieldKitHome;el('kit-profile-open').onclick=()=>K.navigate('equipment-profiles');el('kit-nav-equipment').onclick=()=>K.navigate('equipment-profiles');el('kit-nav-tools').onclick=()=>el('open-tools').click();
+    const checks=document.createElement('dialog');checks.id='kit-saved-checks';checks.setAttribute('aria-labelledby','kit-saved-title');checks.innerHTML='<div class="kit-dialog-heading"><div><h2 id="kit-saved-title">Saved checks</h2><p>Per-drone snapshots with the equipment used at the time.</p></div><button id="kit-checks-close" class="icon-button" aria-label="Close saved checks">×</button></div>';checks.append(el('kit-test-history'));document.body.append(checks);el('kit-checks-close').onclick=()=>checks.close();el('kit-nav-checks').onclick=()=>checks.showModal();
+    const oldBack=window.fieldKitBack;window.fieldKitBack=()=>{if(checks.open){checks.close();return true;}return oldBack();};
+    const savedButton=document.createElement('button');savedButton.textContent='View saved checks';savedButton.onclick=()=>checks.showModal();el('kit-test-status').after(savedButton);
+    const action=document.createElement('section');action.id='kit-next-step';action.hidden=true;el('tool-content').after(action);
+    function view(){const {active,flow}=K.getView();back.hidden=!active;el('kit-nav-home').setAttribute('aria-current',active?'false':'page');el('kit-nav-equipment').setAttribute('aria-current',active==='equipment-profiles'?'page':'false');
+      const title=active?(aliases[active]||toolCatalog.find(t=>t[0]===active)?.[1]):'Field Kit';el('kit-toolbar-title').textContent=active==='connection-doctor'?'Connection':active==='equipment-profiles'?'Equipment':title;
+      const path=K.flows[flow],index=path?.steps.findIndex(([id])=>id===active)??-1;action.hidden=index<0||index>=path.steps.length-1;action.replaceChildren();
+      if(!action.hidden){const [next,label]=path.steps[index+1],p=document.createElement('p'),b=document.createElement('button');p.textContent='Next in '+path.name.toLowerCase();b.textContent=label+' →';b.className='kit-primary';b.onclick=()=>K.navigate(next,flow);action.append(p,b);}
+      if(active==='connection-doctor'&&el('kit-doctor-mode').value==='usb'&&!el('kit-doctor-usb-port').value)el('kit-doctor-scan').click();
+    }
+    window.addEventListener('fieldkit-view',view);
+    // Hide the footer only when the viewport actually shrinks for a keyboard.
+    let normalHeight=innerHeight;
+    const keyboard=()=>{const focused=document.activeElement,editing=focused?.matches('input:not([type=checkbox]):not([type=radio]),textarea,select');if(!editing)normalHeight=innerHeight;const height=Math.min(innerHeight,window.visualViewport?.height||innerHeight);nav.hidden=!!editing&&innerWidth<650&&normalHeight-height>120;};
+    document.addEventListener('focusin',keyboard);document.addEventListener('focusout',()=>setTimeout(keyboard,150));window.addEventListener('resize',keyboard);window.visualViewport?.addEventListener('resize',keyboard);
+
+    function equipment(){const p=W.getProfile(),profiles=W.getProfiles(),home=el('kit-home-equipment');home.replaceChildren();
+      const text=document.createElement('div'),label=document.createElement('small'),name=document.createElement('strong'),detail=document.createElement('span'),button=document.createElement('button');label.textContent='YOUR EQUIPMENT';name.textContent=p?p.name:'Save your setup once';detail.textContent=p?(p.serial||'No asset serial')+(W.isDirty()?' · calculator inputs changed':' · saved calculator inputs'):'Reuse your radio and battery inputs across tools.';button.textContent=p?'Manage':'Add';button.onclick=()=>K.navigate('equipment-profiles');text.append(label,name,detail);home.append(text,button);
+      const selected=profiles.find(x=>x.id===el('kit-profile-select').value)||p;
+      el('kit-profile-select').closest('.input-group').hidden=profiles.length<2&&!!el('kit-profile-select').value;
+      el('kit-profile-delete').disabled=!selected;el('kit-profile-apply').disabled=!selected;el('kit-profile-edit').disabled=!selected;el('kit-profile-apply').textContent=p&&selected?.id===p.id?'Use saved inputs':'Use this equipment';
+      el('kit-profile-apply').hidden=!selected||!el('kit-profile-editor').hidden;el('kit-profile-new').hidden=!profiles.length||!el('kit-profile-editor').hidden;
+      const summary=el('kit-equipment-summary');summary.replaceChildren();
+      if(selected){const title=document.createElement('h2');title.textContent=selected.name;const identity=document.createElement('p');identity.textContent=selected.serial||'No asset serial';const values=document.createElement('div');values.className='kit-equipment-values';for(const [label,value] of [['Radio',selected.frequency+' MHz · '+selected.power+' mW'],['Battery',selected.batteryMah+' mAh · '+selected.batteryVoltage+' V']]){const item=document.createElement('p');item.innerHTML='<small>'+esc(label)+'</small><strong>'+esc(value)+'</strong>';values.append(item);}summary.append(title,identity,values);}
+      const current=el('kit-profile-context');if(p)current.textContent=p.name+(W.isDirty()?' · inputs changed':'');else current.textContent='Equipment optional · calculators use the entered inputs';
+    }
+    const profile=el('tool-equipment-profiles'),grid=el('kit-profile-name').closest('.input-grid');profile.querySelector('label[for="kit-profile-name"]').textContent='Equipment name';profile.querySelector('label[for="kit-profile-serial"]').textContent='Asset serial (optional)';
+    const summary=document.createElement('section');summary.id='kit-equipment-summary';summary.className='kit-equipment-summary';grid.before(summary);
+    const editor=document.createElement('section');editor.id='kit-profile-editor';editor.innerHTML='<h2 id="kit-profile-editor-title">Name your equipment</h2><p class="kit-editor-hint">Give it a name. Add a serial to save per-drone checks.</p>';grid.before(editor);editor.append(grid);grid.className='input-grid kit-profile-identity';
+    function disclosure(id,title,inputIds){const details=document.createElement('details');details.id=id;details.className='kit-settings';const heading=document.createElement('summary');heading.textContent=title;const group=document.createElement('div');group.className='input-grid';for(const inputId of inputIds)group.append(el(inputId).closest('.input-group'));details.append(heading,group);editor.append(details);return details;}
+    disclosure('kit-profile-radio-settings','Radio & antenna inputs',['kit-profile-frequency','kit-profile-power','kit-profile-txGain','kit-profile-rxGain','kit-profile-sensitivity','kit-profile-margin','kit-profile-protocol']);
+    disclosure('kit-profile-battery-settings','Battery inputs',['kit-profile-batteryMah','kit-profile-batteryVoltage','kit-profile-averageCurrent','kit-profile-reserve']);
+    disclosure('kit-profile-hardware-settings','Hardware notes (optional)',['kit-profile-radio','kit-profile-antenna','kit-profile-vtx','kit-profile-firmware']);
+    const review=document.createElement('p');review.className='kit-editor-hint';review.textContent='Uses your current calculator inputs. Review the settings below before estimating.';grid.after(review,el('kit-profile-save'));el('kit-profile-save').classList.add('kit-primary');el('kit-profile-save').textContent='Save equipment';
+    const edit=document.createElement('button');edit.id='kit-profile-edit';edit.textContent='Edit';el('kit-profile-apply').after(edit);el('kit-profile-new').textContent='Add another';el('kit-profile-delete').textContent='Delete';
+    const manage=document.createElement('details');manage.id='kit-profile-manage';manage.className='kit-settings';manage.innerHTML='<summary>Import, share or delete equipment</summary><div class="kit-chips"></div>';profile.append(manage);manage.querySelector('div').append(el('kit-profile-copy'),el('kit-profile-delete'));manage.append(el('kit-profile-import').closest('details'));el('kit-profile-copy').textContent='Copy equipment JSON';
+    el('kit-profile-status').setAttribute('role','alert');profile.querySelector('.tool-header').after(el('kit-profile-status'));
+    const cancel=document.createElement('button');cancel.id='kit-profile-cancel';cancel.textContent='Cancel editing';el('kit-profile-save').after(cancel);profile.querySelectorAll('.kit-chips').forEach(group=>{if(!group.children.length)group.remove();});
+    const setEditor=(open,existing=false)=>{editor.hidden=!open;summary.hidden=open;el('kit-profile-editor-title').textContent=existing?'Edit equipment':'Name your equipment';el('kit-profile-edit').hidden=open;el('kit-profile-apply').hidden=open;el('kit-profile-new').hidden=open||!W.getProfiles().length;cancel.hidden=!W.getProfiles().length;};
+    const originalNew=el('kit-profile-new').onclick;el('kit-profile-new').onclick=()=>{originalNew();setEditor(true);el('kit-profile-name').focus();};
+    el('kit-profile-edit').onclick=()=>{setEditor(true,true);el('kit-profile-name').focus();};
+    cancel.onclick=()=>{const p=W.getProfile();if(p){for(const key of [...FieldKitModels.strings.filter(k=>k!=='id'),...Object.keys(FieldKitModels.numbers)])el('kit-profile-'+key).value=p[key];el('kit-profile-select').value=p.id;}setEditor(false);equipment();};
+    el('kit-profile-select').addEventListener('change',()=>{setEditor(!el('kit-profile-select').value);equipment();});
+    window.addEventListener('fieldkit-equipment',()=>{setEditor(!el('kit-profile-select').value);equipment();});
+    window.addEventListener('fieldkit-profile-form',()=>{equipment();});
+    setEditor(!el('kit-profile-select').value);equipment();
+
+    // Single configuration input first. Baseline and command details remain available.
+    const config=el('tool-config-inspector'),baseline=document.createElement('details');baseline.id='kit-config-baseline-section';baseline.className='kit-settings';baseline.innerHTML='<summary>Compare with a baseline (optional)</summary>';baseline.append(config.querySelector('label[for="kit-config-baseline"]'),el('kit-config-baseline'));el('kit-config-file').after(baseline);el('kit-config-current').rows=6;el('kit-config-current').placeholder='Paste Betaflight CLI dump or diff here';el('kit-config-inspect').textContent='Inspect configuration';el('kit-config-inspect').classList.add('kit-primary');
+    el('kit-config-baseline').addEventListener('input',()=>el('kit-config-inspect').textContent=el('kit-config-baseline').value.trim()?'Compare configurations':'Inspect configuration');
+    // Range has two everyday inputs; gains, sensitivity and margin are explicit details.
+    const rangeDetails=document.createElement('details');rangeDetails.id='kit-range-details';rangeDetails.className='kit-settings';rangeDetails.innerHTML='<summary>Radio details: gains, sensitivity & margin</summary><div class="input-grid"></div>';for(const id of ['range-tx-gain','range-rx-gain','range-sensitivity','range-margin'])rangeDetails.querySelector('div').append(el(id).closest('.input-group'));el('range-freq').closest('.input-grid').after(rangeDetails);
+    const rangeHint=document.createElement('p');rangeHint.className='kit-editor-hint';rangeHint.textContent='The range estimate depends on the radio details below. It does not measure your actual link.';rangeDetails.before(rangeHint);
+
+    // Receive paths get visible choices; protocol/baud/DTR stay in advanced settings.
+    const doctor=el('tool-connection-doctor'),modeGroup=el('kit-doctor-mode').closest('.input-group');modeGroup.hidden=true;
+    const choices=document.createElement('div');choices.id='kit-connection-choices';choices.setAttribute('role','group');choices.setAttribute('aria-label','Connection type');choices.innerHTML='<button data-adapter="usb"><i class="ph ph-usb" aria-hidden="true"></i>USB cable</button><button data-adapter="udp"><i class="ph ph-wifi-high" aria-hidden="true"></i>Wi-Fi / Ethernet</button><button data-adapter="simulation"><i class="ph ph-play-circle" aria-hidden="true"></i>Practice</button>';modeGroup.after(choices);
+    const advanced=document.createElement('details');advanced.id='kit-doctor-advanced';advanced.className='kit-settings';advanced.innerHTML='<summary>Advanced connection settings</summary>';advanced.append(el('kit-doctor-protocol').closest('.input-group'),el('kit-doctor-baud').closest('.input-group'),el('kit-doctor-dtr').closest('label'));el('kit-doctor-live').append(advanced);
+    const usbHelp=el('kit-doctor-live').querySelector('p');usbHelp.textContent='Choose your USB port or network listener. This check only receives telemetry.';el('kit-doctor-udp').querySelector('.result-note').textContent='Send telemetry to this phone’s IP address and port. Received packets do not authenticate the aircraft.';
+    el('kit-doctor-udp-port').closest('.input-group').classList.add('kit-network-port');
+    const portHelp=document.createElement('p');portHelp.className='kit-editor-hint';portHelp.textContent='No port? Try a data-capable cable and a USB host adapter, then refresh.';el('kit-doctor-usb').append(portHelp);el('kit-doctor-scan').textContent='Refresh ports';
+    doctor.querySelector('.tool-header').after(el('kit-doctor-results'));
+    const doctorButtons=el('kit-doctor-start').parentElement;doctorButtons.classList.add('kit-doctor-actions');el('kit-doctor-start').classList.add('kit-primary');el('kit-doctor-stop').textContent='Stop check';
+    const idle=document.createElement('p');idle.id='kit-doctor-idle';idle.className='kit-editor-hint';doctorButtons.before(idle);
+    const mode=()=>{const value=el('kit-doctor-mode').value;choices.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.adapter===value)));el('kit-doctor-start').textContent=value==='simulation'?'Try this example':value==='usb'?'Check USB connection':'Listen for telemetry';idle.textContent=value==='simulation'?'Practice works without a drone. Pick a fault to see what the app would recommend.':value==='usb'?'Connect a data cable, choose a port, then start. Android may ask for USB access.':'Start a UDP listener, then send telemetry to this phone from your device.';advanced.hidden=value==='simulation';el('kit-doctor-baud').closest('.input-group').hidden=value!=='usb';el('kit-doctor-dtr').closest('label').hidden=value!=='usb';};
+    choices.querySelectorAll('button').forEach(b=>b.onclick=()=>{if(el('kit-doctor-mode').value!==b.dataset.adapter){el('kit-doctor-mode').value=b.dataset.adapter;el('kit-doctor-mode').dispatchEvent(new Event('change'));}if(b.dataset.adapter==='usb')el('kit-doctor-scan').click();});
+    el('kit-doctor-mode').addEventListener('change',mode);if(window.Android?.startDiagnostics){el('kit-doctor-mode').value='usb';el('kit-doctor-mode').dispatchEvent(new Event('change'));}mode();
+    const liveButton=el('kit-doctor-start').onclick;el('kit-doctor-start').onclick=()=>{liveButton();el('kit-doctor-stop').hidden=!el('kit-diagnosis-title');};
+    const stop=el('kit-doctor-stop').onclick;el('kit-doctor-stop').onclick=()=>{stop();el('kit-doctor-stop').hidden=true;};el('kit-doctor-stop').hidden=true;
+    el('kit-doctor-results').hidden=true;
+    window.addEventListener('fieldkit-diagnostic-reset',()=>el('kit-doctor-stop').hidden=true);
+    window.addEventListener('fieldkit-diagnostic-render',()=>el('kit-doctor-stop').hidden=false);
+    window.addEventListener('fieldkit-next-check',event=>{
+      const where=event.detail;
+      if(where==='position'){K.navigate('position-health',K.getView().flow);return;}
+      if(where==='protocol'){advanced.open=true;advanced.scrollIntoView({block:'center'});el('kit-doctor-protocol').focus();return;}
+      if(where==='video'){const d=el('kit-video-host').closest('details');d.open=true;el('kit-video-host').focus();return;}
+      if(where==='scenario'){el('kit-doctor-scenario').focus();return;}
+      choices.scrollIntoView({block:'start'});el('kit-doctor-mode').value==='usb'?el('kit-doctor-scan').focus():el('kit-doctor-udp-port').focus();
+    });
+    view();
+  });
+}

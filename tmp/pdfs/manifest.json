@@ -1,0 +1,935 @@
+{
+  "version": "0.3.1",
+  "shots": {
+    "home": {
+      "file": "home.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "[data-flow=hardware]",
+          "x": 368,
+          "y": 415.125
+        },
+        {
+          "selector": "#kit-home-equipment button",
+          "x": 353,
+          "y": 293.1875
+        },
+        {
+          "selector": "#kit-nav-tools",
+          "x": 376,
+          "y": 815.75
+        }
+      ],
+      "scroll": 0
+    },
+    "search": {
+      "file": "search.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#tool-search",
+          "x": 352,
+          "y": 617.625
+        },
+        {
+          "selector": "#tool-list [data-tool=coordinates]",
+          "x": 367,
+          "y": 726.375
+        },
+        {
+          "selector": "#close-tools",
+          "x": 367,
+          "y": 549.53125
+        }
+      ],
+      "scroll": 0
+    },
+    "equipment": {
+      "file": "equipment.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-profile-name",
+          "x": 181.5,
+          "y": 540.40625
+        },
+        {
+          "selector": "#kit-profile-serial",
+          "x": 368,
+          "y": 540.40625
+        },
+        {
+          "selector": "#kit-profile-save",
+          "x": 368,
+          "y": 676.28125
+        }
+      ],
+      "scroll": 0
+    },
+    "equipment-summary": {
+      "file": "equipment-summary.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-equipment-summary",
+          "x": 368,
+          "y": 491.75
+        },
+        {
+          "selector": "#kit-profile-edit",
+          "x": 215.640625,
+          "y": 394.75
+        },
+        {
+          "selector": "#kit-profile-manage > summary",
+          "x": 368,
+          "y": 641.75
+        }
+      ],
+      "scroll": 0
+    },
+    "doctor-practice": {
+      "file": "doctor-practice.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "[data-adapter=simulation]",
+          "x": 368.015625,
+          "y": 352.96875
+        },
+        {
+          "selector": "#kit-doctor-scenario",
+          "x": 368,
+          "y": 469.96875
+        },
+        {
+          "selector": "#kit-doctor-start",
+          "x": 368,
+          "y": 596.84375
+        }
+      ],
+      "scroll": 0
+    },
+    "doctor-fault": {
+      "file": "doctor-fault.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-diagnosis-source",
+          "x": 347,
+          "y": 338.46875
+        },
+        {
+          "selector": "#kit-diagnosis-action",
+          "x": 347,
+          "y": 480.90625
+        },
+        {
+          "selector": "#kit-diagnostic-step-1 > summary",
+          "x": 368,
+          "y": 663.15625
+        }
+      ],
+      "scroll": 0
+    },
+    "position": {
+      "file": "position.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-position-max-age",
+          "x": 368,
+          "y": 362.96875
+        },
+        {
+          "selector": "#kit-position-results",
+          "x": 368,
+          "y": 576.96875
+        },
+        {
+          "selector": "#kit-position-phone",
+          "x": 158.640625,
+          "y": 423.96875
+        }
+      ],
+      "scroll": 0
+    },
+    "save-check": {
+      "file": "save-check.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-test-operator",
+          "x": 181.5,
+          "y": 380.125
+        },
+        {
+          "selector": "#kit-test-notes",
+          "x": 368,
+          "y": 507.015625
+        },
+        {
+          "selector": "#kit-test-save",
+          "x": 207.375,
+          "y": 598.90625
+        }
+      ],
+      "scroll": 1047
+    },
+    "saved-checks": {
+      "file": "saved-checks.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-test-history h3",
+          "x": 351,
+          "y": 712.859375
+        },
+        {
+          "selector": "#kit-test-history p",
+          "x": 351,
+          "y": 747.8046875
+        },
+        {
+          "selector": "#kit-test-history button",
+          "x": 351,
+          "y": 765
+        }
+      ],
+      "scroll": 1047
+    },
+    "doctor-usb": {
+      "file": "doctor-usb.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "[data-adapter=usb]",
+          "x": 124.671875,
+          "y": 177.96875
+        },
+        {
+          "selector": "#kit-doctor-usb-port",
+          "x": 368,
+          "y": 349.5625
+        },
+        {
+          "selector": "#kit-doctor-advanced > summary",
+          "x": 368,
+          "y": 531.4375
+        }
+      ],
+      "scroll": 175
+    },
+    "doctor-udp": {
+      "file": "doctor-udp.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "[data-adapter=udp]",
+          "x": 246.34375,
+          "y": 177.96875
+        },
+        {
+          "selector": "#kit-doctor-udp-port",
+          "x": 368,
+          "y": 350.5625
+        },
+        {
+          "selector": "#kit-doctor-start",
+          "x": 368,
+          "y": 703.03125
+        }
+      ],
+      "scroll": 175
+    },
+    "config-input": {
+      "file": "config-input.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-config-current",
+          "x": 368,
+          "y": 190.46875
+        },
+        {
+          "selector": "#kit-config-baseline-section > summary",
+          "x": 368,
+          "y": 450.03125
+        },
+        {
+          "selector": "#kit-config-inspect",
+          "x": 224.71875,
+          "y": 742.59375
+        }
+      ],
+      "scroll": 207
+    },
+    "config-results": {
+      "file": "config-results.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-config-results .result-card",
+          "x": 368,
+          "y": 345.390625
+        },
+        {
+          "selector": "#kit-config-results table",
+          "x": 368,
+          "y": 703.078125
+        },
+        {
+          "selector": "#kit-config-export",
+          "x": 336.578125,
+          "y": 214.59375
+        }
+      ],
+      "scroll": 791
+    },
+    "range": {
+      "file": "range.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#range-freq",
+          "x": 333.171875,
+          "y": 362.96875
+        },
+        {
+          "selector": "#range-power",
+          "x": 148.96875,
+          "y": 362.96875
+        },
+        {
+          "selector": "#kit-range-details > summary",
+          "x": 368,
+          "y": 497.84375
+        }
+      ],
+      "scroll": 0
+    },
+    "fresnel": {
+      "file": "fresnel.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#fres-dist",
+          "x": 161.828125,
+          "y": 362.96875
+        },
+        {
+          "selector": "#fres-freq",
+          "x": 333.171875,
+          "y": 362.96875
+        },
+        {
+          "selector": "#fresnel-results",
+          "x": 368,
+          "y": 554.96875
+        }
+      ],
+      "scroll": 0
+    },
+    "dipole": {
+      "file": "dipole.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#dip-freq",
+          "x": 146.671875,
+          "y": 385.359375
+        },
+        {
+          "selector": "#dip-vf",
+          "x": 344.625,
+          "y": 385.359375
+        },
+        {
+          "selector": "#dipole-results",
+          "x": 368,
+          "y": 699.359375
+        }
+      ],
+      "scroll": 0
+    },
+    "harmonics": {
+      "file": "harmonics.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#harm-freq",
+          "x": 146.671875,
+          "y": 160.140625
+        },
+        {
+          "selector": "#harm-vband-start",
+          "x": 146.671875,
+          "y": 254.140625
+        },
+        {
+          "selector": "#harm-results",
+          "x": 368,
+          "y": 422.140625
+        }
+      ],
+      "scroll": 481
+    },
+    "channel-planner": {
+      "file": "channel-planner.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#pilots-list",
+          "x": 368,
+          "y": 361.75
+        },
+        {
+          "selector": "#add-pilot-btn",
+          "x": 113.828125,
+          "y": 562.75
+        },
+        {
+          "selector": "#channel-results",
+          "x": 368,
+          "y": 698.25
+        }
+      ],
+      "scroll": 0
+    },
+    "closest-channel": {
+      "file": "closest-channel.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#cc-freq",
+          "x": 146.671875,
+          "y": 337.359375
+        },
+        {
+          "selector": "#cc-band",
+          "x": 368,
+          "y": 430.359375
+        },
+        {
+          "selector": "#cc-results",
+          "x": 368,
+          "y": 527.359375
+        }
+      ],
+      "scroll": 0
+    },
+    "vtx-config": {
+      "file": "vtx-config.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#vtx-model",
+          "x": 368,
+          "y": 428.359375
+        },
+        {
+          "selector": "#vtx-uart",
+          "x": 368,
+          "y": 520.359375
+        },
+        {
+          "selector": "#vtx-copy-btn",
+          "x": 87.984375,
+          "y": 708.359375
+        }
+      ],
+      "scroll": 0
+    },
+    "unlock-vtx": {
+      "file": "unlock-vtx.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#vtx-protocol",
+          "x": 368,
+          "y": 151.46875
+        },
+        {
+          "selector": "#vtx-maxpower",
+          "x": 368,
+          "y": 222.46875
+        },
+        {
+          "selector": "#vtx-table-copy",
+          "x": 368,
+          "y": 582.96875
+        }
+      ],
+      "scroll": 181
+    },
+    "fc-matcher": {
+      "file": "fc-matcher.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#fc-matcher-input",
+          "x": 368,
+          "y": 342.96875
+        },
+        {
+          "selector": ".fc-layout .primary-action",
+          "x": 126.96875,
+          "y": 548.46875
+        },
+        {
+          "selector": "#fc-matcher-result",
+          "x": 368,
+          "y": 645.46875
+        }
+      ],
+      "scroll": 0
+    },
+    "elrs-info": {
+      "file": "elrs-info.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#tool-elrs-info .tool-title",
+          "x": 368,
+          "y": 167.59375
+        },
+        {
+          "selector": "#tool-elrs-info table",
+          "x": 349,
+          "y": 367.96875
+        }
+      ],
+      "scroll": 0
+    },
+    "coordinates": {
+      "file": "coordinates.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-coordinate-input",
+          "x": 368,
+          "y": 367.46875
+        },
+        {
+          "selector": "#kit-coordinate-convert",
+          "x": 92.40625,
+          "y": 438.46875
+        },
+        {
+          "selector": "#kit-coordinate-results",
+          "x": 368,
+          "y": 535.46875
+        }
+      ],
+      "scroll": 0
+    },
+    "battery": {
+      "file": "battery.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-battery-mah",
+          "x": 181.5,
+          "y": 362.96875
+        },
+        {
+          "selector": "#kit-battery-current",
+          "x": 181.5,
+          "y": 477.96875
+        },
+        {
+          "selector": "#kit-battery-result",
+          "x": 368,
+          "y": 575.96875
+        }
+      ],
+      "scroll": 0
+    },
+    "signal-check": {
+      "file": "signal-check.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-signal-rssi",
+          "x": 181.5,
+          "y": 159.96875
+        },
+        {
+          "selector": "#kit-signal-sensitivity",
+          "x": 368,
+          "y": 180.96875
+        },
+        {
+          "selector": "#kit-signal-result",
+          "x": 368,
+          "y": 393.96875
+        }
+      ],
+      "scroll": 297
+    },
+    "field-checklist": {
+      "file": "field-checklist.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-check-0",
+          "x": 33,
+          "y": 334.96875
+        },
+        {
+          "selector": "#kit-check-1",
+          "x": 33,
+          "y": 385.96875
+        },
+        {
+          "selector": "#kit-check-3",
+          "x": 33,
+          "y": 487.96875
+        }
+      ],
+      "scroll": 0
+    },
+    "range-results": {
+      "file": "range-results.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#range-results",
+          "x": 368,
+          "y": 430.84375
+        },
+        {
+          "selector": "#kit-reuse-frequency",
+          "x": 368,
+          "y": 673.578125
+        }
+      ],
+      "scroll": 286
+    },
+    "bench-export": {
+      "file": "bench-export.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-check-notes",
+          "x": 368,
+          "y": 474.46875
+        },
+        {
+          "selector": "#kit-check-progress",
+          "x": 368,
+          "y": 616.1875
+        },
+        {
+          "selector": "#kit-check-export",
+          "x": 144.84375,
+          "y": 666.4375
+        }
+      ],
+      "scroll": 331
+    },
+    "terrain": {
+      "file": "terrain.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#rf-map",
+          "x": 367,
+          "y": 190.140625
+        },
+        {
+          "selector": "#rf-coord-input",
+          "x": 368,
+          "y": 620.515625
+        },
+        {
+          "selector": "#rf-map-status",
+          "x": 367,
+          "y": 470.140625
+        }
+      ],
+      "scroll": 260
+    },
+    "terrain-controls": {
+      "file": "terrain-controls.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#rf-dem-status",
+          "x": 304,
+          "y": 152.515625
+        },
+        {
+          "selector": "#rf-calc-btn",
+          "x": 213.96875,
+          "y": 273.515625
+        },
+        {
+          "selector": "#rf-advanced-toggle",
+          "x": 33,
+          "y": 331.515625
+        }
+      ],
+      "scroll": 1287
+    },
+    "mesh": {
+      "file": "mesh.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#mesh-protocol",
+          "x": 368,
+          "y": 389.9375
+        },
+        {
+          "selector": "#mesh-tx-power",
+          "x": 144.65625,
+          "y": 482.9375
+        },
+        {
+          "selector": "#mesh-map",
+          "x": 368,
+          "y": 687.9375
+        }
+      ],
+      "scroll": 0
+    },
+    "mesh-controls": {
+      "file": "mesh-controls.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#mesh-dem-status",
+          "x": 304,
+          "y": 291.9375
+        },
+        {
+          "selector": "#tool-mesh-planner .primary-action",
+          "x": 213.96875,
+          "y": 414.9375
+        },
+        {
+          "selector": "#mesh-kill-mode",
+          "x": 33,
+          "y": 472.9375
+        }
+      ],
+      "scroll": 793
+    },
+    "exported-report": {
+      "file": "exported-report.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "h2",
+          "x": 366,
+          "y": 221.78125
+        },
+        {
+          "selector": "table tbody tr:first-child",
+          "x": 382,
+          "y": 438.6875
+        }
+      ],
+      "scroll": 0
+    }
+  },
+  "catalog": [
+    [
+      "rf-terrain",
+      "Terrain link",
+      "Ground-to-air path & clearance",
+      "RF planning",
+      "mountains",
+      true
+    ],
+    [
+      "mesh-planner",
+      "Mesh planner",
+      "Nodes, coverage & link health",
+      "RF planning",
+      "graph",
+      true
+    ],
+    [
+      "range",
+      "Estimate radio range",
+      "Estimate a radio link budget",
+      "RF planning",
+      "broadcast",
+      false
+    ],
+    [
+      "fresnel",
+      "Check path clearance",
+      "Check space around a radio path",
+      "RF planning",
+      "arrows-out",
+      false
+    ],
+    [
+      "harmonics",
+      "Harmonics",
+      "Find potential frequency conflicts",
+      "RF planning",
+      "wave-sine",
+      false
+    ],
+    [
+      "dipole",
+      "Antenna length",
+      "Calculate a dipole cut length",
+      "RF planning",
+      "ruler",
+      false
+    ],
+    [
+      "channel-planner",
+      "Channel planner",
+      "Separate pilot video channels",
+      "Video & channels",
+      "sliders",
+      false
+    ],
+    [
+      "closest-channel",
+      "Closest channel",
+      "Match a frequency to a channel",
+      "Video & channels",
+      "crosshair",
+      false
+    ],
+    [
+      "vtx-config",
+      "VTX configuration",
+      "Prepare Betaflight CLI settings",
+      "Video & channels",
+      "terminal-window",
+      false
+    ],
+    [
+      "unlock-vtx",
+      "VTX table",
+      "Build a transmitter channel table",
+      "Video & channels",
+      "list",
+      false
+    ],
+    [
+      "fc-matcher",
+      "Flight controller match",
+      "Identify a board from CLI output",
+      "Flight controllers",
+      "cpu",
+      false
+    ],
+    [
+      "elrs-info",
+      "ExpressLRS reference",
+      "Packet rates & setup reference",
+      "Flight controllers",
+      "radio",
+      false
+    ],
+    [
+      "coordinates",
+      "Convert coordinates",
+      "Convert DD, DMS & MGRS; copy a location",
+      "Field utilities",
+      "map-pin",
+      false
+    ],
+    [
+      "battery",
+      "Estimate battery time",
+      "Capacity, reserve, current & runtime",
+      "Field utilities",
+      "battery-charging",
+      false
+    ],
+    [
+      "signal-check",
+      "Check signal readings",
+      "dBm/mW conversion and manual link headroom",
+      "Field utilities",
+      "wave-sine",
+      false
+    ],
+    [
+      "field-checklist",
+      "Bench notes",
+      "Save verification notes for your field kit",
+      "Field utilities",
+      "checks",
+      false
+    ],
+    [
+      "equipment-profiles",
+      "My equipment",
+      "Save radio, antenna, video, battery & firmware assumptions",
+      "Hardware",
+      "identification-card",
+      false
+    ],
+    [
+      "config-inspector",
+      "Inspect a configuration",
+      "Inspect and compare Betaflight CLI text offline",
+      "Hardware",
+      "git-diff",
+      false
+    ],
+    [
+      "connection-doctor",
+      "Check a connection",
+      "Guided USB/network, protocol, telemetry & video diagnosis",
+      "Hardware",
+      "stethoscope",
+      false
+    ],
+    [
+      "position-health",
+      "Check position",
+      "Inspect freshness, accuracy & source disagreement",
+      "Field utilities",
+      "crosshair",
+      false
+    ]
+  ],
+  "errors": []
+}

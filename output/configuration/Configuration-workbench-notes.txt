@@ -1,0 +1,73 @@
+Prismo Field Kit 0.3.2 — configuration workbench
+
+This update adds the production-line configuration workflow. It is a software
+practice build. It does not read or change settings on physical drones, and it
+does not flash firmware. Existing receive-only diagnostics are unchanged.
+
+Open Tools, search “configuration”, then choose Configuration workbench.
+
+1. Setup
+Enter a batch/work-order name and operator if you want them on the report.
+Choose Betaflight, ArduPilot or PX4. Load the practice example, load a text file,
+or paste/edit settings. Add a template name, board and exact firmware version.
+Save templates to reuse them on this phone.
+
+Betaflight accepts supported dump/diff-style commands and preserves PID/rate
+profile scopes. Unsupported commands and duplicate settings are rejected.
+Reset/defaults and save commands are omitted from the template. This is not a
+universal CLI executor or a complete restore engine.
+
+ArduPilot/PX4 accept NAME VALUE, NAME,VALUE and five-column QGroundControl
+parameter files. Mixed system/component files must be split first. Board and
+firmware are entered separately because parameter rows do not identify them.
+
+Copy config/parameter text copies the text to the clipboard. This Android shell
+exports run reports as HTML; it does not yet offer native .param/.txt file export.
+
+2. Drones
+Choose the software test drones and compare. The preview shows what changes,
+what already matches and which settings stay with each drone. The default list
+keeps common identity/calibration fields, but cannot identify every device-
+specific field. Review the list. Exact stack, board and firmware must match.
+
+3. Run
+The practice batch backs up each drone before its first write, applies settings
+one drone at a time, saves, then reads them back. A rejected write, disconnect or
+readback mismatch stops the queue. The affected unit is marked incomplete.
+Successful practice readback is not a physical production acceptance test.
+
+Earlier runs and reports is available below all three screens. Reports include
+batch/operator, per-unit results, before backups, hashes, the template and the
+simulation label. The last 10 runs and up to 30 templates are kept on this phone.
+Export reports you want to keep. Clearing app storage removes local history.
+There is no automatic rollback or backup restore button in this version.
+
+What remains before use on a production line
+Recover/build the native Android module and add real USB/MAVLink configuration
+adapters, native text-file export and durable production records. Real-device
+identity, disarmed state, parameter encoding, exclusive writer ownership,
+persistence and post-save readback must be measured by those adapters. This
+asset update cannot turn the existing receive-only adapter into a writer.
+
+Windows manufacturing app parity
+The exact earlier Windows app source was not found in the available project
+files. This update follows the requested production-line pattern; it is not a
+verified port of that app. Existing Field Kit inspection/checklist/report tools
+remain available alongside the new workbench.
+
+Validation
+35 model tests: three-stack batch success; backup before write; profile scopes;
+MAVLink integer encoding/float32; exact compatibility; identity/calibration
+preservation; storage failure; stale comparison; cancellation; rejected write;
+connection loss; failed readback; failure on second drone; blocked live adapter.
+Browser UI: three-stack batches, import, saved templates, edit invalidation,
+report export, three failure cases and controls at 360/393/800 px.
+APK: alignment, signing certificate, version metadata and byte comparison.
+Physical Android installation and physical flight controllers were not tested.
+
+Official protocol references
+https://betaflight.com/docs/wiki/guides/current/Cli
+https://mavlink.io/en/services/parameter.html
+https://ardupilot.org/dev/docs/mavlink-get-set-params.html
+https://docs.qgroundcontrol.com/Stable_V5.0/en/qgc-dev-guide/file_formats/parameters.html
+https://docs.px4.io/main/en/advanced_config/parameters

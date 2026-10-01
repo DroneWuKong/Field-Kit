@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Equipment diagnostic record</title><style>body{font:16px system-ui;max-width:900px;margin:30px auto;padding:20px;color:#172a32}pre{white-space:pre-wrap;overflow-wrap:anywhere}table{border-collapse:collapse;width:100%}th,td{text-align:left;vertical-align:top;padding:12px;border-bottom:1px solid #ccd8da}small{color:#52656c}details{margin-top:24px}</style></head><body><h1>Equipment diagnostic record</h1><p>2026-10-01T16:43:47.706Z</p><h2>Demo quad · DEMO-001</h2><p>Equipment revision 1 · simulation</p><p>Diagnostic observations only. Simulations and manual notes are labeled; unverified steps remain open.</p><table><thead><tr><th>Check</th><th>Status</th><th>Observation</th></tr></thead><tbody><tr><th>Transport</th><td>observed</td><td>Software fixture · healthy</td></tr><tr><th>Protocol</th><td>observed</td><td>MAVLINK · 180 bytes · 3 counted MAV/GHST/CRSF frames</td></tr><tr><th>Telemetry</th><td>simulated</td><td>Mock or simulated observation; keep separate from live measurements. Age 1.1 s.</td></tr><tr><th>Video</th><td>unverified</td><td>Simulated stream available; no device video or latency measurement.</td></tr></tbody></table><h2>Bench notes</h2><pre>Training example: simulated receive only. Hardware and video remain unverified.</pre><details><summary>Full record and source digests</summary><pre>{
+  "schema": "prismo.fieldkit.test-record.v1",
+  "id": "753dcd5cde34fd0a408222f343145b33",
+  "createdAt": "2026-10-01T16:43:47.706Z",
+  "appVersion": "browser-software",
+  "profile": {
+    "schema": "prismo.fieldkit.equipment.v1",
+    "revision": 1,
+    "id": "216370d0c6fc2547c49394cfdd8210d5",
+    "name": "Demo quad",
+    "serial": "DEMO-001",
+    "radio": "",
+    "antenna": "",
+    "vtx": "",
+    "firmware": "",
+    "protocol": "AUTO_DETECT",
+    "frequency": 915,
+    "power": 100,
+    "txGain": 2,
+    "rxGain": 2,
+    "sensitivity": -112,
+    "margin": 10,
+    "batteryMah": 5000,
+    "batteryVoltage": 22.2,
+    "averageCurrent": 20,
+    "reserve": 20
+  },
+  "context": "{\"profile\":{\"schema\":\"prismo.fieldkit.equipment.v1\",\"revision\":1,\"id\":\"216370d0c6fc2547c49394cfdd8210d5\",\"name\":\"Demo quad\",\"serial\":\"DEMO-001\",\"radio\":\"\",\"antenna\":\"\",\"vtx\":\"\",\"firmware\":\"\",\"protocol\":\"AUTO_DETECT\",\"frequency\":915,\"power\":100,\"txGain\":2,\"rxGain\":2,\"sensitivity\":-112,\"margin\":10,\"batteryMah\":5000,\"batteryVoltage\":22.2,\"averageCurrent\":20,\"reserve\":20},\"inputs\":{\"range-freq\":\"915\",\"fres-freq\":\"915\",\"dip-freq\":\"915\",\"harm-freq\":\"915\",\"range-power\":\"100\",\"kit-power-mw\":\"100\",\"range-tx-gain\":\"2\",\"range-rx-gain\":\"2\",\"range-sensitivity\":\"-112\",\"kit-signal-sensitivity\":\"-112\",\"range-margin\":\"10\",\"kit-battery-mah\":\"5000\",\"kit-battery-voltage\":\"22.2\",\"kit-battery-current\":\"20\",\"kit-battery-reserve\":\"20\"}}",
+  "evidence": "simulation",
+  "operator": "Demo station",
+  "batch": "",
+  "observation": {
+    "schema": "prismo.fieldkit.diagnostic.v1",
+    "state": "listening",
+    "mode": "simulation",
+    "evidence": "simulation",
+    "device": "Software fixture · healthy",
+    "protocol": "MAVLINK",
+    "bytes": 180,
+    "frames": 3,
+    "crcErrors": 0,
+    "rcFrames": 0,
+    "byteAgeSeconds": 0,
+    "observedAt": 1790873026621,
+    "video": "Simulated stream available; no device video or latency measurement.",
+    "position": {
+      "lat": 41.88,
+      "lon": -87.63,
+      "fixType": 3,
+      "validFix": true,
+      "satellites": 12,
+      "hdop": 0.9,
+      "accuracy": null,
+      "ageSeconds": 0
+    },
+    "context": "{\"profile\":{\"schema\":\"prismo.fieldkit.equipment.v1\",\"revision\":1,\"id\":\"216370d0c6fc2547c49394cfdd8210d5\",\"name\":\"Demo quad\",\"serial\":\"DEMO-001\",\"radio\":\"\",\"antenna\":\"\",\"vtx\":\"\",\"firmware\":\"\",\"protocol\":\"AUTO_DETECT\",\"frequency\":915,\"power\":100,\"txGain\":2,\"rxGain\":2,\"sensitivity\":-112,\"margin\":10,\"batteryMah\":5000,\"batteryVoltage\":22.2,\"averageCurrent\":20,\"reserve\":20},\"inputs\":{\"range-freq\":\"915\",\"fres-freq\":\"915\",\"dip-freq\":\"915\",\"harm-freq\":\"915\",\"range-power\":\"100\",\"kit-power-mw\":\"100\",\"range-tx-gain\":\"2\",\"range-rx-gain\":\"2\",\"range-sensitivity\":\"-112\",\"kit-signal-sensitivity\":\"-112\",\"range-margin\":\"10\",\"kit-battery-mah\":\"5000\",\"kit-battery-voltage\":\"22.2\",\"kit-battery-current\":\"20\",\"kit-battery-reserve\":\"20\"}}"
+  },
+  "steps": [
+    {
+      "name": "Transport",
+      "state": "observed",
+      "detail": "Software fixture · healthy"
+    },
+    {
+      "name": "Protocol",
+      "state": "observed",
+      "detail": "MAVLINK · 180 bytes · 3 counted MAV/GHST/CRSF frames"
+    },
+    {
+      "name": "Telemetry",
+      "state": "simulated",
+      "detail": "Mock or simulated observation; keep separate from live measurements. Age 1.1 s."
+    },
+    {
+      "name": "Video",
+      "state": "unverified",
+      "detail": "Simulated stream available; no device video or latency measurement."
+    }
+  ],
+  "manualVideoNotes": "",
+  "notes": "Training example: simulated receive only. Hardware and video remain unverified.",
+  "disposition": "diagnostic snapshot; unverified steps remain open",
+  "payloadSha256": "ab6d57f42ff2ce06a613b226460386ae4a7998fc7dd8f8356c23c8e27f481bc8"
+}</pre></details></body></html>

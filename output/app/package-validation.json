@@ -1,0 +1,15 @@
+{
+  "version": "0.3.1",
+  "versionCode": 4,
+  "sha256": "94c69610ffea5b9059e35ec62bb843c336f30c828169b9bfa30c2689b9eae8b6",
+  "native_code_resources_unchanged": true,
+  "asset_changes": [
+    "assets/tools/fieldkit.js",
+    "assets/tools/tools-core.js",
+    "assets/tools/tools-mobile.css",
+    "assets/tools/tools-ui.js",
+    "assets/tools/tools_offline.html"
+  ],
+  "retired_data_absent": true,
+  "same_signer": true
+}

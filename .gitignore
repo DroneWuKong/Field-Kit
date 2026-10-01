@@ -1,0 +1,13 @@
+node_modules/
+build-private/
+*.keystore
+*.jks
+*.idsig
+__pycache__/
+*.pyc
+tmp/pdfs/rendered/
+playwright-report/
+test-results/
+local.properties
+.env
+.env.*

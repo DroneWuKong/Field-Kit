@@ -1,0 +1,18 @@
+{
+  "checks": [
+    "betaflight three-unit batch with backup and readback",
+    "ardupilot three-unit batch with backup and readback",
+    "px4 three-unit batch with backup and readback",
+    "File import, saved template reload and edit invalidates comparison",
+    "reject stops queue",
+    "disconnect stops queue",
+    "readback stops queue",
+    "Exported HTML report includes full before backup and simulation label",
+    "Practice pull fills editor",
+    "360px controls fit",
+    "393px controls fit",
+    "800px controls fit"
+  ],
+  "errors": [],
+  "physicalDeviceConfigured": false
+}

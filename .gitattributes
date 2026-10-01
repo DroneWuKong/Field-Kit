@@ -1,0 +1,7 @@
+# Preserve delivered asset bytes, including on Windows with autocrlf enabled.
+source/assets/** -text
+source/assets/tools/vendor/** -whitespace
+*.apk binary
+*.pdf binary
+*.png binary
+*.woff2 binary

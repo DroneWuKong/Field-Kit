@@ -1,0 +1,58 @@
+Implementation boundary — Prismo Field Kit configuration workbench
+
+Current LIVE_CONFIG_WRITE_GATE=false; NativeAdapter always rejects. Do not set
+this constant true to bypass missing transport. FieldKitDeployment.run accepts
+only a mode=simulation adapter. Implement and test a separate live admission
+path when native Android configuration transport is available.
+
+Required adapter operations
+read(uid): complete snapshot with immutable hardware UID/serial (system ID alone
+is not identity), stack, exact board/firmware, armed=false positively observed,
+complete=true, all known configuration entries, target system/component IDs
+1..255 for MAVLink, negotiated bytewise/c-cast encoding, and actual parameter
+types. Include ranges/read-only metadata where authoritative. Never mark an
+incomplete or timed-out parameter catalog complete. Reconcile counts/index gaps
+and dynamic parameter-list changes. Betaflight snapshots must preserve master,
+PID profile and rate-profile settings without flattening scope.
+
+write(uid, change): exclusive physical writer; serial/USB permission; bound UID,
+port session and confirmed disarmed state; bounded request timeout/retry and
+cancellation between operations. MAVLink PARAM_SET uses the observed type and
+negotiated encoding; await matching target/name/type/value response. An echo is
+not sufficient proof of persistent success. CLI transport needs a defined prompt
+parser, explicit profile selection and reviewed command support, error parsing
+and resource/band/table handling. Reject unsupported or reset commands.
+
+commit(uid): use the stack's supported persistence procedure. Betaflight save
+reboots; parameter persistence semantics vary by autopilot. Confirm durable
+save and reconnect to the same immutable hardware UID. Then obtain a complete
+fresh read; compare every requested value and untouched identity/calibration.
+Report only what the adapter can prove, with a hardware evidence label.
+
+Production storage and review
+Use durable native storage/file records rather than relying on WebView local
+storage. Save the complete original snapshot before the first write and write-
+ahead attempt records before each operation. Bind preview to template hash,
+exact target identity and source snapshot fingerprint. Parameter-file source
+system IDs identify the source, not the destination. Keep per-unit overlays and
+shared settings separate. Default protection patterns are not exhaustive.
+
+Failure/recovery
+Disconnect, partial apply, unexpected armed/identity state, stale preview,
+unknown types/encoding, storage failure or failed readback must never produce a
+pass. Stop queue and preserve before backup and last attempted step. Offer a
+fresh read and reviewed recovery; do not silently roll back or retry indefinitely.
+
+Native UI capabilities
+Expose USB discovery/permission and read/write operations through an app-owned
+Android bridge, separate from current receive-only diagnostic calls. Native
+saveText/export should provide MIME/type and filenames for .param/.txt without
+requiring clipboard use. Disable untrusted WebView navigation/bridge exposure.
+The user-facing interface must distinguish Practice and Connected-device modes.
+
+Integration tests
+Exercise fake serial/USB and MAVLink peers through the real native protocol
+state machines, including missing parameter indices, type/encoding mismatch,
+read-only echo behavior, reboot reconnect, target substitution, writer conflict,
+loss during apply and persistence failure. Then validate on physical Betaflight,
+ArduPilot and PX4 hardware. Do not label software-only results hardware verified.

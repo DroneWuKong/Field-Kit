@@ -1,0 +1,20 @@
+{
+  "name": "prismo-field-kit",
+  "version": "0.3.2",
+  "private": true,
+  "description": "Prismo Field Kit Android recovered assets, production configuration practice and project handoff",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "npm run test:model && npm run test:ui && npm run test:regression",
+    "test:model": "node --test tests/configuration-model.cjs",
+    "test:ui": "node tests/configuration-ui.cjs",
+    "test:regression": "node tests/retired-tool-regression.cjs",
+    "validate:apk": "python3 tests/validate-package.py",
+    "capture:docs": "node tmp/pdfs/capture.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}
