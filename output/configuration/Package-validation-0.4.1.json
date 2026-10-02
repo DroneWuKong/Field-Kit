@@ -1,0 +1,14 @@
+{
+  "package": "com.dronewukong.fieldtools",
+  "version": "0.4.1",
+  "versionCode": 7,
+  "apkSha256": "f15382b9380d417be81e7282d079bf86b3b39537d774adb94df01389810335b2",
+  "signerCertificateSha256": "2e127ebcae2cfa8e81e529327b98ea2758050120ce692001136413f0437413c9",
+  "githubCommit": "d5f8b34877e03eef908cebd8f7584dbac555c4ae",
+  "githubWorkflowRun": 37007736779,
+  "githubWorkflowConclusion": "success",
+  "modelAndWireTests": 45,
+  "phoneWidthsChecked": [360, 393, 800],
+  "physicalFlightControllerTestedHere": false,
+  "notes": "Signed with the same certificate as the existing Field Kit update line. CI covered connected PX4 UI and ArduPilot MAVLink pull/write/readback with deterministic peers. Physical board testing remains required."
+}

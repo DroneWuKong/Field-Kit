@@ -1,5 +1,5 @@
 {
-  "version": "0.3.1",
+  "version": "0.4.0",
   "shots": {
     "home": {
       "file": "home.png",
@@ -767,6 +767,45 @@
         }
       ],
       "scroll": 0
+    },
+    "configuration-workbench": {
+      "file": "configuration-workbench.png",
+      "width": 393,
+      "height": 852,
+      "targets": [
+        {
+          "selector": "#kit-deploy-connected",
+          "x": 215,
+          "y": 260
+        },
+        {
+          "selector": "#kit-deploy-port",
+          "x": 286,
+          "y": 390
+        },
+        {
+          "selector": "#kit-deploy-open",
+          "x": 245,
+          "y": 630
+        }
+      ]
+    },
+    "configuration-results": {
+      "file": "configuration-results.png",
+      "width": 357,
+      "height": 569,
+      "targets": [
+        {
+          "selector": "verified-persistent-result",
+          "x": 184,
+          "y": 445
+        },
+        {
+          "selector": "process-next-aircraft",
+          "x": 276,
+          "y": 294
+        }
+      ]
     }
   },
   "catalog": [
@@ -912,6 +951,14 @@
       "Inspect and compare Betaflight CLI text offline",
       "Hardware",
       "git-diff",
+      false
+    ],
+    [
+      "configuration-deploy",
+      "Configuration workbench",
+      "Create templates; read and apply settings to software test drones",
+      "Hardware",
+      "stack",
       false
     ],
     [
