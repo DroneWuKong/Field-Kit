@@ -6,7 +6,7 @@ if(new URLSearchParams(location.search).get('mode')==='standalone')document.addE
  let connected=false,connectedSnapshot=null,link=null,portId='',portBaud=115200,lineCount=0,metadataBusy=false;
  const choices=items=>items.map(([v,n])=>'<option value="'+v+'">'+n+'</option>').join('');
  const stackOptions=[['betaflight','Betaflight CLI'],['ardupilot','ArduPilot parameters'],['px4','PX4 parameters']];
- K.panel('configuration-deploy','Configuration workbench','Choose a standard setup, work through a batch of drones, and keep a result for each unit.',`
+ K.panel('configuration-deploy','Configure several drones','Connect one controller, choose the settings you want, compare, apply and verify. Repeat without rebuilding the template.',`
   <div class="kit-deploy-banner"><strong>Configuration mode</strong><p>Practice uses software drones. Connected device reads the actual controller and writes only the settings shown in your comparison.</p></div>
   <div class="kit-chips"><button id="kit-deploy-practice" aria-pressed="true">Practice</button><button id="kit-deploy-connected" aria-pressed="false">Connected device</button></div>
   <div id="kit-deploy-connect" hidden><h2>Connect a flight controller</h2>
