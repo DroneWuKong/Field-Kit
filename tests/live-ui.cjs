@@ -89,7 +89,9 @@ const out=path.resolve(__dirname,'../output/ui-preview');fs.mkdirSync(out,{recur
     await card.locator('.kit-param-value').fill('500');await card.locator('.kit-param-value').dispatchEvent('change');
     assert.match(await page.locator('#kit-deploy-text').inputValue(),/WPNAV_SPEED 500/);
     await page.locator('#kit-deploy-metadata-refresh').click();
-    await page.waitForFunction(()=>document.querySelector('#kit-deploy-parameter-rows')?.textContent.includes('Mission travel speed'));
+    await page.waitForFunction(()=>document.querySelector('#kit-deploy-metadata-source')?.textContent.includes('Official ArduPilot'));
+    await page.locator('#kit-deploy-parameter-search').fill('mission');
+    assert.match(await page.locator('#kit-deploy-parameter-rows').textContent(),/Mission travel speed/);
     await page.locator('#kit-deploy-parameter-browser').screenshot({path:path.join(out,'guided-ardupilot-393.png')});
    }
    assert.deepEqual(errors,[]);
