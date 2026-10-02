@@ -185,7 +185,7 @@ public final class FieldToolsActivity extends Activity {
         @JavascriptInterface public void closeConfigPort() { diagnostics.reset(); link.close(); }
         @JavascriptInterface public void fetchArduMetadata(String requestId, String vehicle, String keysJson) {
             if (requestId == null || !requestId.matches("[a-fA-F0-9-]{36}")) return;
-            if (!Set.of("ArduCopter", "ArduPlane", "Rover", "ArduSub").contains(vehicle)) {
+            if (vehicle == null || !vehicle.matches("ArduCopter|ArduPlane|Rover|ArduSub")) {
                 deliverArduMetadata(requestId, null, "Unsupported ArduPilot vehicle type"); return;
             }
             final Set<String> wanted = new HashSet<>();
