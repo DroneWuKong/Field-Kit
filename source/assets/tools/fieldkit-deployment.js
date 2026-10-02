@@ -1,9 +1,6 @@
 'use strict';
-// Hardware boundary: current Android package has receive-only native adapters.
-// Simulation does not require or open a USB/network device. Never silently route
-// a physical-device request to the simulator.
+// The practice adapter is explicit. Connected transports live in fieldkit-live.js.
 (function(root){
- const LIVE_CONFIG_WRITE_GATE=false;
  const clone=x=>JSON.parse(JSON.stringify(x));
  const stacks=new Set(['betaflight','ardupilot','px4']);
  const fail=m=>{throw Error(m);};
@@ -36,12 +33,12 @@
   if(stack==='ardupilot')return /^(?:SYSID_THISMAV|CAN_P\d+_NODE_ID|INS_|COMPASS_|RC\d+_(?:MIN|MAX|TRIM)$|BATT\d*_(?:VOLT_MULT|AMP_PERVLT|AMP_OFFSET)$)/.test(key);
   return /^(?:CAL_|TC_|SENS_(?:BOARD|DPRES)_|MAV_SYS_ID$|MAV_COMP_ID$|UAVCAN_NODE_ID$|RC\d+_(?:MIN|MAX|TRIM|DZ)$)/.test(key);
  }
- function parse(stack,text){
+ function parse(stack,text,{readDump=false}={}){
   if(!stacks.has(stack))fail('Choose Betaflight, ArduPilot or PX4');
-  if(typeof text!=='string'||text.length>250000||text.includes('\0'))fail('Configuration text must be under 250 KB and contain no NULs');
+  if(typeof text!=='string'||text.length>(readDump?300000:250000)||text.includes('\0'))fail('Configuration text is too large or contains NULs');
   const entries=Object.create(null),warnings=[];let board='',firmware='',scope='',fileScope=null;
   function add(key,v,type=null){
-   if(Object.hasOwn(entries,key))fail('Duplicate setting '+key);
+   if(Object.hasOwn(entries,key)&&!readDump)fail('Duplicate setting '+key);
    if(Object.keys(entries).length>=4000)fail('Too many settings');
    entries[key]={value:v,type};
   }
@@ -60,7 +57,7 @@
     const set=line.match(/^set\s+([a-z][a-z0-9_]*)\s*=\s*(.+)$/);
     if(set){add(scope+'set '+set[1],set[2].trim());continue;}
     const v=line.match(/^(resource|serial|vtxtable|aux|feature|map|rxrange|rxfail|mixer|mmix|smix|servo|led|color|mode_color|adjrange|beeper|timer|dma|pinio|osd_layout)\s+(.+)$/);
-    if(!v)fail('Unsupported Betaflight command on line '+(i+1)+': '+line);
+    if(!v){if(readDump){warnings.push('Unparsed dump line '+(i+1)+': '+line);continue;}fail('Unsupported Betaflight command on line '+(i+1)+': '+line);}
     const words=v[2].split(/\s+/);let key,setting;
     if(v[1]==='feature'||v[1]==='beeper'){key=v[1]+' '+words[0].replace(/^-/,'');setting=words[0].startsWith('-')?'OFF':'ON';}
     else if(v[1]==='map'||v[1]==='mixer'){key=v[1];setting=v[2];}
@@ -97,9 +94,9 @@
  function plan(template,snapshot){
   validateSnapshot(snapshot);
   if(template.stack!==snapshot.stack||template.board!==snapshot.board||template.firmware!==snapshot.firmware)fail('Template does not match stack, board and exact firmware');
-  const changes=[],kept=[],unchanged=[],errors=[];
+  const changes=[],kept=[],unchanged=[],errors=[],forced=new Set(template.forceKeys||[]);
   for(const [key,entry] of Object.entries(template.entries)){
-   if(keepPerDrone(template.stack,key)){kept.push(key);continue;}
+   if(keepPerDrone(template.stack,key)&&!forced.has(key)){kept.push(key);continue;}
    if(!Object.hasOwn(snapshot.entries,key)){errors.push('Setting not present on this drone: '+key);continue;}
    const current=snapshot.entries[key];let desired=entry.value;
    if(template.stack!=='betaflight'){
@@ -114,7 +111,14 @@
   }
   return {uid:snapshot.uid,changes,kept,unchanged,errors};
  }
- function stable(s){return JSON.stringify([s.uid,s.stack,s.board,s.firmware,s.armed,s.complete,s.systemId,s.componentId,s.encoding,Object.entries(s.entries).sort(([a],[b])=>a.localeCompare(b))]);}
+ function selectTemplate(template,selectedKeys,forceKeys=[]){
+  if(!Array.isArray(selectedKeys)||!Array.isArray(forceKeys))fail('Parameter selection is invalid');
+  const selected=new Set(selectedKeys),forced=new Set(forceKeys),entries=Object.create(null);
+  for(const key of selected){if(!Object.hasOwn(template.entries,key))fail('Selected setting is not in the template: '+key);entries[key]=clone(template.entries[key]);}
+  for(const key of forced)if(!selected.has(key)||!keepPerDrone(template.stack,key))fail('Per-drone override is invalid: '+key);
+  return {...clone(template),entries,forceKeys:[...forced],selection:{selected:[...selected],templateSettingCount:Object.keys(template.entries).length}};
+ }
+ function stable(s){return JSON.stringify([s.uid,s.stack,s.board,s.firmware,s.armed,s.complete,s.systemId,s.componentId,s.encoding,s.rawDump||'',Object.entries(s.entries).sort(([a],[b])=>a.localeCompare(b))]);}
  async function digest(text){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
  function exportText(s){
   if(s.stack==='betaflight'){
@@ -132,7 +136,7 @@
  function demo(stack){
   const meta={betaflight:['DEMO_F405','4.5.2'],ardupilot:['DEMO_COPTER','4.5.7'],px4:['DEMO_FMU','1.15.4']}[stack];if(!meta)fail('Unknown practice stack');
   const entries=stack==='betaflight'?{'set vtx_channel':{value:'1'},'set serialrx_provider':{value:'CRSF'},'set name':{value:'Demo A'},'set acc_calibration':{value:'1,2,3,1'}}:stack==='ardupilot'?{WPNAV_SPEED:{value:400,type:9,min:0,max:2000},ATC_RAT_RLL_P:{value:Math.fround(.135),type:9,min:0,max:1},SYSID_THISMAV:{value:1,type:4},COMPASS_OFS_X:{value:10,type:9}}:{MPC_XY_VEL_MAX:{value:5,type:9,min:0,max:20},MC_ROLLRATE_P:{value:Math.fround(.15),type:9,min:0,max:1},MAV_SYS_ID:{value:1,type:6},CAL_MAG0_XOFF:{value:Math.fround(.2),type:9}};
-  return [0,1,2].map(i=>{const per=clone(entries);if(stack==='betaflight'){per['set name'].value='Demo '+(i+1);per['set acc_calibration'].value=(i+1)+',2,3,1';}else if(stack==='ardupilot'){per.SYSID_THISMAV.value=i+1;per.COMPASS_OFS_X.value=10+i;}else{per.MAV_SYS_ID.value=i+1;per.CAL_MAG0_XOFF.value=Math.fround(.2+i*.01);}return {uid:'PRACTICE-'+stack+'-'+(i+1),serial:'DEMO-'+(i+1),stack,board:meta[0],firmware:meta[1],armed:false,complete:true,evidence:'simulation',systemId:i+1,componentId:1,encoding:stack==='px4'?'bytewise':'c-cast',entries:per};});
+  return [0,1,2].map(i=>{const per=clone(entries);if(stack==='betaflight'){per['set name'].value='Demo '+(i+1);per['set acc_calibration'].value=(i+1)+',2,3,1';}else if(stack==='ardupilot'){per.SYSID_THISMAV.value=i+1;per.COMPASS_OFS_X.value=10+i;}else{per.MAV_SYS_ID.value=i+1;per.CAL_MAG0_XOFF.value=Math.fround(.2+i*.01);}return {uid:'PRACTICE-'+stack+'-'+(i+1),serial:'DEMO-'+(i+1),stack,board:meta[0],firmware:meta[1],vehicle:stack==='ardupilot'?'ArduCopter':null,mavType:stack==='ardupilot'?3:null,armed:false,complete:true,evidence:'simulation',systemId:i+1,componentId:1,encoding:stack==='px4'?'bytewise':'c-cast',entries:per};});
  }
  const example={betaflight:'# Betaflight / STM32F405 (S405) 4.5.2\nboard_name DEMO_F405\nset vtx_channel = 2\nset serialrx_provider = CRSF\nset name = Do not clone this name\n',ardupilot:'WPNAV_SPEED 450\nATC_RAT_RLL_P 0.14\nSYSID_THISMAV 99\nCOMPASS_OFS_X 999\n',px4:'1\t1\tMPC_XY_VEL_MAX\t6\t9\n1\t1\tMC_ROLLRATE_P\t0.16\t9\n1\t1\tMAV_SYS_ID\t99\t6\n1\t1\tCAL_MAG0_XOFF\t999\t9\n'};
  class PracticeAdapter{
@@ -147,14 +151,11 @@
   }
   async commit(uid){this.commits.push(uid);if(this.fault==='readback'){const s=this.drones.find(s=>s.uid===uid);s.entries[this.writes.find(w=>w.uid===uid).key].value='STALE';}return {uid,persisted:true,reconnected:true};}
  }
- class NativeAdapter{
-  constructor(){fail('LIVE_CONFIG_WRITE_GATE: native configuration transport is not implemented in this Android build. Use Practice.');}
- }
  async function run({template,adapter,targets,ledger,signal,expected,job={},onProgress=()=>{}}){
-  if(adapter.mode!=='simulation')fail('LIVE_CONFIG_WRITE_GATE: physical writes are unavailable');
+  if(adapter.mode!=='simulation' && !(adapter.mode==='hardware' && adapter.verified===true))fail('No verified physical configuration adapter');
   if(!Array.isArray(targets)||!targets.length||new Set(targets).size!==targets.length||targets.length>50)fail('Choose 1-50 distinct drones');
   if(String(job.batch||'').length>80||String(job.operator||'').length>80)fail('Batch and operator names must be under 80 characters');
-  const report={job:{batch:String(job.batch||''),operator:String(job.operator||'')},schema:'prismo.configuration-run.v1',evidence:'simulation',createdAt:new Date().toISOString(),template:clone(template),units:[],state:'running'};
+  const report={job:{batch:String(job.batch||''),operator:String(job.operator||'')},schema:'prismo.configuration-run.v1',evidence:adapter.mode==='hardware'?'hardware':'simulation',createdAt:new Date().toISOString(),template:clone(template),units:[],state:'running'};
   for(const uid of targets){
    const unit={uid,state:'reading',attempted:[],verified:[],kept:[],backup:null,errors:[]};report.units.push(unit);
    const cancel=()=>{if(signal?.aborted)fail('Run stopped. Read this drone again before another attempt.');};
@@ -170,17 +171,25 @@
      const ack=await adapter.write(uid,change);
      if(ack.uid!==uid||ack.key!==change.key||ack.value!==change.after)fail('Write response does not match '+change.key);
     }
-    if(p.changes.length){cancel();const saved=await adapter.commit(uid);if(saved.uid!==uid||saved.persisted!==true||saved.reconnected!==true)fail('Save/reconnect not confirmed');}
+    if(p.changes.length){cancel();const saved=await adapter.commit(uid);if(saved.uid!==uid||saved.reconnected!==true)fail('Save/reconnect not confirmed');unit.persistence=saved.persisted===true?'confirmed':'unconfirmed';}
     cancel();const after=await adapter.read(uid);validateSnapshot(after);
     if(after.uid!==uid||after.stack!==before.stack||after.board!==before.board||after.firmware!==before.firmware||after.systemId!==before.systemId||after.componentId!==before.componentId||after.encoding!==before.encoding)fail('Identity changed during readback');
     for(const c of p.changes){if(after.entries[c.key]?.value!==c.after)fail('Readback differs for '+c.key);unit.verified.push(c.key);}
     const changed=new Set(p.changes.map(c=>c.key));for(const [key,entry] of Object.entries(before.entries)){if(!changed.has(key)&&JSON.stringify(after.entries[key])!==JSON.stringify(entry))fail('Untouched setting changed: '+key);}
-    unit.state=p.changes.length?'verified':'no-changes';unit.after=after;unit.afterHash=await digest(stable(after));
+    unit.state=p.changes.length?(unit.persistence==='unconfirmed'?'verified-active':'verified'):'no-changes';unit.after=after;unit.afterHash=await digest(stable(after));
     await ledger.save(clone(report));onProgress(clone(report));
    }catch(e){unit.state=unit.attempted.length?'incomplete':'blocked';unit.errors.push(e.message);report.state='stopped';try{await ledger.save(clone(report));}catch(storage){unit.errors.push('Report could not be saved: '+storage.message);}onProgress(clone(report));break;}
   }
   if(report.state==='running')report.state='finished';await ledger.save(clone(report));return report;
  }
- const api={LIVE_CONFIG_WRITE_GATE,fingerprint:stable,parse,makeTemplate,plan,value,paramValueBytes,keepPerDrone,exportText,demo,example,PracticeAdapter,NativeAdapter,run,clone};
+ function verifyRestart(report,snapshot){
+  validateSnapshot(snapshot);if(!report||report.evidence!=='hardware')fail('Choose a connected-device run');
+  const unit=report.units?.find(u=>u.uid===snapshot.uid);if(!unit)fail('This controller does not match the selected run');
+  if(snapshot.stack!==report.template.stack||snapshot.board!==report.template.board||snapshot.firmware!==report.template.firmware)fail('Controller stack, board or firmware differs from the run');
+  const desired=new Map((unit.preview?.changes||[]).map(c=>[c.key,c.after])),mismatches=[];
+  for(const key of unit.verified||[]){if(!snapshot.entries[key]||snapshot.entries[key].value!==desired.get(key))mismatches.push(key);}
+  return {state:mismatches.length?'restart-check-failed':'verified-persistent',checked:(unit.verified||[]).length,mismatches,observedAt:new Date().toISOString(),uid:snapshot.uid,board:snapshot.board,firmware:snapshot.firmware};
+ }
+ const api={fingerprint:stable,parse,makeTemplate,plan,selectTemplate,verifyRestart,value,paramValueBytes,keepPerDrone,exportText,demo,example,PracticeAdapter,run,clone};
  root.FieldKitDeployment=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(globalThis);

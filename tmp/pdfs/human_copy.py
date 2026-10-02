@@ -6,11 +6,11 @@ def page(title, intro, shot, steps, heading, result, note_heading, note, caption
 QUICK = [
 page('Start here',
      'Field Kit helps you plan a setup, check a connection and keep useful notes. Pick the job you have in front of you.', 'home', [
-    ('Choose what you want to do', 'The four buttons on Home are the easiest way in. For a first look, tap Check a connection.'),
+    ('Choose what you want to do', 'The five job cards on Home are the easiest way in. To load the same setup on several aircraft, tap Configure drones.'),
     ('Name your setup', 'Save your drone or test rig under Equipment. You can reuse its radio and battery settings instead of typing them again.'),
     ('Looking for something specific?', 'Tap Tools or Search. Try a word such as GPS, cable or battery to find the right tool.')],
-    'You don\'t need to learn all 20 tools', 'Start with one task. Come back to Home when you want to try something else.',
-    'What the app does', 'Field Kit calculates, checks incoming data and saves notes. It does not fly the drone, flash firmware or change a device\'s settings.'),
+    'You don\'t need to learn all 21 tools', 'Start with one job. The everyday choices appear first; technical controls stay available under Advanced or details.',
+    'What the app does', 'Field Kit calculates, checks incoming data and saves notes. Connected Configuration can read and write reviewed flight-controller settings. It does not fly the drone or flash firmware.'),
 page('Give your setup a name',
      'Open Equipment. A name makes it much easier to tell one drone\'s settings and reports from another\'s.', 'equipment', [
     ('Use a name you will recognize', '“Demo quad” is used in this guide. Use the name you normally call your own drone or test rig.'),
@@ -56,7 +56,7 @@ TOOLS = {
     ('Edit what changed', 'Open Edit, change the relevant fields, then save. The radio, battery and hardware fields are grouped to make them easier to find.'),
     ('Move a setup to another device', 'Open Import, share or delete equipment. Copy equipment JSON exports the setup; Import reads that format back in.')],
     'When the numbers look different', 'If you changed a shared calculator input, the app marks it inputs changed. Use saved inputs restores the selected equipment\'s values.',
-    'Your saved setups', 'You can keep up to 50 profiles. They contain the values you entered; selecting one does not detect or configure the hardware.'),
+    'Your saved setups', 'You can keep up to 50 profiles. They contain the values you entered; selecting one does not detect or configure the hardware. Use Configure several drones for connected reads and writes.'),
 'connection-doctor': page('Check a USB connection',
     'Use this when your phone is connected to a serial telemetry device and you want to see whether data is arriving.', 'doctor-usb', [
     ('Connect, then choose USB cable', 'Use a cable that carries data and a USB host adapter if your phone needs one. Tap Refresh ports if the device does not appear.'),
@@ -177,7 +177,7 @@ TOOLS = {
     ('Choose the UART', 'Check which UART the VTX control wire actually uses and which protocol the hardware supports.'),
     ('Copy the text', 'Review the generated settings, then tap Copy. You can use the text in your usual Betaflight configuration workflow.')],
     'A head start on the configuration', 'The tool prepares settings and a VTX-table snippet. You still decide whether they are right for the board.',
-    'Before you paste it into Betaflight', 'Check the board, firmware, wiring and supported frequency and power settings. Field Kit does not apply these commands.'),
+    'Before you apply it', 'Check the board, firmware, wiring and supported frequency and power settings. This generator only prepares text; load it into Configure several drones when you want to compare and apply it.'),
 'unlock-vtx': page('Build a Betaflight VTX table',
     'The app calls this Unlock VTX table. It creates the channel and power table text for you to review.', 'unlock-vtx', [
     ('Choose the control protocol', 'Use the protocol your VTX and firmware support. The power-value format changes with the protocol.'),
@@ -248,7 +248,7 @@ NAVIGATION = page('Find a tool and keep it handy',
     ('Search in ordinary words', 'Tap Tools or Search. GPS finds tools for coordinates and position; battery finds the runtime calculator.'),
     ('Open the result', 'Tap a matching tool. If you use it often, tap the star in its header to pin it on Home.'),
     ('Close the list to return', 'Close the search list to get back to your screen. Android Back also closes lists, then returns an open tool to Home.')],
-    'Four places to remember', 'Home starts a task. Equipment holds your saved setup. Saved checks holds snapshots. Tools gives you the full list.',
+    'Four places to remember', 'Home starts one of five jobs. Equipment holds your saved setup. Saved checks holds snapshots. Tools gives you the full list.',
     'On a small screen', 'Swipe up to reach more controls. Tap section headings to expand them. The bottom navigation may hide while the keyboard is open.')
 
 REPORT = page('What the other person receives',
@@ -264,8 +264,8 @@ LAST_SECTIONS = [
     ('The USB device does not appear', 'Check that the cable carries data, the phone supports the connection and Android granted USB access. Tap Refresh ports. If a port appears but no data arrives, check protocol, baud rate and whether the device actually sends data without requests.'),
     ('Network data or GPS is missing', 'Check the sender\'s destination IP and port. Open the protocol details if bytes arrive but cannot be decoded. Fresh packets do not guarantee fresh GPS: check the position timestamp too.'),
     ('The map is blank', 'You can still place points on the grid. Map pictures and elevation are separate: load a supported elevation file covering the route for offline terrain calculations.'),
-    ('Before clearing app storage', 'Export the records you need. Equipment, calculator inputs, pinned and recent tools, checklist notes and the latest 50 snapshots are stored on this device. Raw configuration text lasts only for the open session.'),
-    ('About the screenshots', 'These screens come from Field Kit 0.3.1, package com.dronewukong.fieldtools. Demo quad, DEMO-001, DEMO_F405 and the USB port label are examples. Practice uses software-generated data. This guide does not claim a physical hardware test.')
+    ('Before clearing app storage', 'Export the records you need. Equipment, calculator inputs, pinned and recent tools, checklist notes and the latest 50 snapshots are stored on this device. Saved templates and the latest 10 configuration runs stay on this phone until cleared.'),
+    ('About the screenshots', 'General and connected configuration screens are shown from the full Field Kit interface. Version 0.4.2 keeps the package com.dronewukong.fieldtools so it updates earlier builds. Demo quad, DEMO-001, DEMO_F405 and the port labels are examples. The connected result uses a protocol test fixture; physical controller testing is still required.')
 ]
 
 DESCRIPTIONS = {
