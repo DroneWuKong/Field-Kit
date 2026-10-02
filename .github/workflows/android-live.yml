@@ -21,7 +21,7 @@ jobs:
       - name: Install Android platform and signing tools
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
       - name: Test configuration state machines
-        run: node --test tests/configuration-model.cjs tests/live-wire.cjs
+        run: node --test tests/configuration-model.cjs tests/live-wire.cjs tests/ardu-metadata.cjs
       - name: Install browser checks
         run: |
           npm ci

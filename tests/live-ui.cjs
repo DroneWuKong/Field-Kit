@@ -31,7 +31,8 @@ const out=path.resolve(__dirname,'../output/ui-preview');fs.mkdirSync(out,{recur
       if(id===21)queue.push(param('MPC_XY_VEL_MAX',values.MPC_XY_VEL_MAX,0),param('MC_ROLLRATE_P',values.MC_ROLLRATE_P,1),heartbeat());
       if(id===23){const name=String.fromCharCode(...p.slice(16,32)).split('\0')[0],value=new DataView(p.buffer,p.byteOffset+10,4).getFloat32(0,true);values[name]=value;queue.push(heartbeat(),param(name,value,name==='MPC_XY_VEL_MAX'?0:1));}
       return 'ok';},
-     closeConfigPort:()=>{state='closed';},pinConfigPeer:()=>true,saveConfigRun:()=>true,saveText:()=>{},copyText:()=>true
+     closeConfigPort:()=>{state='closed';},pinConfigPeer:()=>true,saveConfigRun:()=>true,saveText:()=>{},copyText:()=>true,
+     fetchArduMetadata:(id,vehicle,keys)=>setTimeout(()=>FieldKitArduMetadata.receive(id,JSON.stringify({vehicle,fetchedAt:'2026-10-02T00:00:00Z',parameters:{WPNAV_SPEED:{DisplayName:'Mission travel speed',Description:'Maximum horizontal speed while travelling between mission points.',Units:'cm/s',Range:{low:20,high:2000},Increment:50,User:'Standard'}}}),null),0)
     };
    });
    await page.route('**/*',route=>{
@@ -43,7 +44,7 @@ const out=path.resolve(__dirname,'../output/ui-preview');fs.mkdirSync(out,{recur
    await page.goto('https://appassets.androidplatform.net/assets/tools/tools_offline.html?mode=standalone#home');
    assert.equal(await page.locator('#kit-home').isVisible(),true);
    assert.equal(await page.locator('#kit-bottom-nav').isVisible(),true);
-   assert.equal(await page.locator('.kit-task').count(),4);
+   assert.equal(await page.locator('.kit-task').count(),5);
    assert.equal(await page.locator('#tool-list .tool-choice').count(),21);
    if(width===393)await page.screenshot({path:path.join(out,'full-app-home-393.png'),fullPage:true});
    await page.evaluate(()=>showTool('configuration-deploy',true));
@@ -78,6 +79,19 @@ const out=path.resolve(__dirname,'../output/ui-preview');fs.mkdirSync(out,{recur
    await page.locator('#kit-deploy-practice').click();
    assert.equal(await page.locator('#kit-deploy-connect').isHidden(),true);
    assert.equal(await page.locator('#kit-deploy-targets input').count(),3);
+   if(width===393){
+    await page.locator('#kit-deploy-stack').selectOption('ardupilot');
+    assert.equal(await page.locator('#kit-deploy-parameter-browser').isVisible(),true);
+    assert.equal(await page.locator('#kit-deploy-raw-editor').evaluate(e=>e.open),false);
+    await page.locator('#kit-deploy-parameter-search').fill('waypoint');
+    assert.match(await page.locator('#kit-deploy-parameter-rows').textContent(),/Waypoint speed/);
+    const card=page.locator('.kit-param-card[data-param="WPNAV_SPEED"]');
+    await card.locator('.kit-param-value').fill('500');await card.locator('.kit-param-value').dispatchEvent('change');
+    assert.match(await page.locator('#kit-deploy-text').inputValue(),/WPNAV_SPEED 500/);
+    await page.locator('#kit-deploy-metadata-refresh').click();
+    await page.waitForFunction(()=>document.querySelector('#kit-deploy-parameter-rows')?.textContent.includes('Mission travel speed'));
+    await page.locator('#kit-deploy-parameter-browser').screenshot({path:path.join(out,'guided-ardupilot-393.png')});
+   }
    assert.deepEqual(errors,[]);
    await context.close();
   }
