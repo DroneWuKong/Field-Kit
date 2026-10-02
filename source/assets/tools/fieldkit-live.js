@@ -45,17 +45,21 @@
   }
   async disarmed(){const id=this.identity;const h=await this.wire.until(m=>m.id===0&&m.systemId===id.systemId&&m.componentId===id.componentId,4000);if(h.payload.length<9||h.payload[6]&128)fail('Disarmed state could not be confirmed');this.lastHeartbeat=h;}
   async read(uid){
-   const id=this.identity||await this.discover();if(uid&&uid!==id.uid)fail('Connected drone identity changed');await this.disarmed();this.wire.clear();await this.wire.send(21,Uint8Array.of(id.systemId,id.componentId));const entries=Object.create(null),indices=new Map();let count=null,last=Date.now(),deadline=Date.now()+120000;
-   while(Date.now()-last<8000&&Date.now()<deadline){
-    try {const m=await this.wire.until(m=>m.id===22&&m.systemId===id.systemId&&m.componentId===id.componentId,500);const p=readParam(m,id.encoding);if(count!==null&&count!==p.count)fail('Parameter count changed during read');count=p.count;if(count<1||count>10000||p.index>=count)fail('Invalid parameter count/index');if(indices.has(p.index)&&indices.get(p.index)!==p.name)fail('Parameter index changed during read');indices.set(p.index,p.name);entries[p.name]={value:p.value,type:p.type};last=Date.now();if(indices.size===count)break;}
-    catch(e){if(!/timed out/.test(e.message))throw e;}
+   const id=this.identity||await this.discover();if(uid&&uid!==id.uid)fail('Connected drone identity changed');await this.disarmed();const deadline=Date.now()+120000;
+   for(let generation=0;generation<3&&Date.now()<deadline;generation++){
+    this.wire.clear();await this.wire.send(21,Uint8Array.of(id.systemId,id.componentId));const entries=Object.create(null),indices=new Map();let count=null,last=Date.now(),changed=false;
+    while(Date.now()-last<8000&&Date.now()<deadline){
+     try {const m=await this.wire.until(m=>m.id===22&&m.systemId===id.systemId&&m.componentId===id.componentId,500);const p=readParam(m,id.encoding);if(p.index===65535)continue;if(count!==null&&count!==p.count){changed=true;break;}count=p.count;if(count<1||count>10000||p.index>=count)fail('Invalid parameter count/index');if(indices.has(p.index)&&indices.get(p.index)!==p.name){changed=true;break;}indices.set(p.index,p.name);entries[p.name]={value:p.value,type:p.type};last=Date.now();if(indices.size===count)break;}
+     catch(e){if(!/timed out/.test(e.message))throw e;}
+    }
+    if(changed)continue;if(count===null)fail('No parameters received');
+    for(let round=0;round<3&&!changed&&indices.size<count&&Date.now()<deadline;round++)for(let i=0;i<count&&Date.now()<deadline;i++)if(!indices.has(i)){
+     const req=le(20);dv(req).setInt16(0,i,true);req[2]=id.systemId;req[3]=id.componentId;await this.wire.send(20,req);
+     try {const m=await this.wire.until(m=>m.id===22&&m.systemId===id.systemId&&m.componentId===id.componentId,600);const p=readParam(m,id.encoding);if(p.index===65535)continue;if(p.count!==count||p.index>=count){changed=true;break;}if(indices.has(p.index)&&indices.get(p.index)!==p.name){changed=true;break;}indices.set(p.index,p.name);entries[p.name]={value:p.value,type:p.type};}catch(e){if(!/timed out/.test(e.message))throw e;}
+    }
+    if(changed)continue;if(indices.size!==count)fail('Incomplete parameter read: '+indices.size+'/'+count);await this.disarmed();return {...id,serial:id.uid,armed:false,complete:true,evidence:'hardware',entries};
    }
-   if(count===null)fail('No parameters received');
-   for(let round=0;round<3&&indices.size<count&&Date.now()<deadline;round++)for(let i=0;i<count&&Date.now()<deadline;i++)if(!indices.has(i)){
-    const req=le(20);dv(req).setInt16(0,i,true);req[2]=id.systemId;req[3]=id.componentId;await this.wire.send(20,req);
-    try {const m=await this.wire.until(m=>m.id===22&&m.systemId===id.systemId&&m.componentId===id.componentId,600);const p=readParam(m,id.encoding);if(p.count!==count||p.index>=count)fail('Catalog changed during retry');indices.set(p.index,p.name);entries[p.name]={value:p.value,type:p.type};}catch(e){if(!/timed out/.test(e.message))throw e;}
-   }
-   if(indices.size!==count)fail('Incomplete parameter read: '+indices.size+'/'+count);await this.disarmed();return {...id,serial:id.uid,armed:false,complete:true,evidence:'hardware',entries};
+   fail('Parameter catalog kept changing; wait for startup to finish and read again');
   }
   async write(uid,change){const id=this.identity;if(!id||id.uid!==uid)fail('Connected drone identity changed');await this.disarmed();const key=change.key,b=le(23),v=dv(b);b.set(D.paramValueBytes(change.after,change.type,id.encoding),0);b[4]=id.systemId;b[5]=id.componentId;writeName(b,6,key);b[22]=change.type;this.wire.clear();await this.wire.send(23,b);const m=await this.wire.until(m=>m.id===22&&m.systemId===id.systemId&&m.componentId===id.componentId&&nameAt(m.payload,8)===key,4000);const p=readParam(m,id.encoding);if(p.type!==change.type||p.value!==change.after)fail('Parameter rejected: '+key);return {uid,key,value:p.value};}
   async commit(uid){if(uid!==this.identity?.uid)fail('Connected drone changed');await this.disarmed();return {uid,persisted:false,reconnected:true};}

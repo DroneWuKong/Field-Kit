@@ -59,6 +59,7 @@ const out=path.resolve(__dirname,'../output/ui-preview');fs.mkdirSync(out,{recur
     await page.locator('#kit-deploy-connected').click();
     await page.locator('#kit-deploy-open').click();
     await page.waitForFunction(()=>document.querySelector('#kit-deploy-device')?.textContent.includes('settings read from hardware'));
+    assert.equal(await page.locator('#kit-deploy-parameter-browser').isVisible(),true);await page.locator('#kit-deploy-parameter-browser').evaluate(e=>e.open=true);await page.locator('#kit-deploy-parameter-search').fill('MPC');assert.match(await page.locator('#kit-deploy-parameter-rows').textContent(),/MPC_XY_VEL_MAX/);
     await page.locator('#kit-deploy-pull').click();
     await page.waitForFunction(()=>document.querySelector('#kit-deploy-text')?.value.includes('MPC_XY_VEL_MAX'));
     await page.locator('#kit-deploy-name').fill('PX4 line setup');
@@ -66,10 +67,13 @@ const out=path.resolve(__dirname,'../output/ui-preview');fs.mkdirSync(out,{recur
     await page.locator('#kit-deploy-to-targets').click();
     await page.locator('#kit-deploy-preview').click();
     await page.waitForFunction(()=>document.querySelector('#kit-deploy-preview-results')?.textContent.includes('1 changes'));
+    assert.equal(await page.locator('.kit-deploy-setting:checked').count(),1);
     await page.locator('#kit-deploy-to-run').click();
     await page.locator('#kit-deploy-run').click();
     await page.waitForFunction(()=>document.querySelector('#kit-deploy-run-results')?.textContent.includes('verified-active'));
+    assert.equal(await page.locator('#kit-deploy-verify-restart').isVisible(),true);await page.locator('#kit-deploy-verify-restart').click();await page.waitForFunction(()=>document.querySelector('#kit-deploy-run-results')?.textContent.includes('verified-persistent'));
     await page.locator('#kit-deploy-stage-3').screenshot({path:path.join(out,'connected-result-393.png')});
+    await page.locator('#kit-deploy-next-aircraft').click();assert.equal(await page.locator('#kit-deploy-stage-1').isVisible(),true);assert.equal(await page.locator('#kit-deploy-name').inputValue(),'PX4 line setup');
    }
    await page.locator('#kit-deploy-practice').click();
    assert.equal(await page.locator('#kit-deploy-connect').isHidden(),true);

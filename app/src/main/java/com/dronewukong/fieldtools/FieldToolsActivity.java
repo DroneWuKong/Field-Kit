@@ -162,7 +162,7 @@ public final class FieldToolsActivity extends Activity {
     }
 
     private final class Bridge {
-        @JavascriptInterface public String getAppVersion() { return "0.4.0"; }
+        @JavascriptInterface public String getAppVersion() { return "0.4.1"; }
         @JavascriptInterface public String listConfigPorts() { return link.list(); }
         @JavascriptInterface public String openConfigUsb(String id, int baud) { diagnostics.reset(); return link.openUsb(id, baud); }
         @JavascriptInterface public String openConfigUdp(int port) { diagnostics.reset(); return link.openUdp(port); }

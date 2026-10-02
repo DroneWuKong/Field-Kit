@@ -94,9 +94,9 @@
  function plan(template,snapshot){
   validateSnapshot(snapshot);
   if(template.stack!==snapshot.stack||template.board!==snapshot.board||template.firmware!==snapshot.firmware)fail('Template does not match stack, board and exact firmware');
-  const changes=[],kept=[],unchanged=[],errors=[];
+  const changes=[],kept=[],unchanged=[],errors=[],forced=new Set(template.forceKeys||[]);
   for(const [key,entry] of Object.entries(template.entries)){
-   if(keepPerDrone(template.stack,key)){kept.push(key);continue;}
+   if(keepPerDrone(template.stack,key)&&!forced.has(key)){kept.push(key);continue;}
    if(!Object.hasOwn(snapshot.entries,key)){errors.push('Setting not present on this drone: '+key);continue;}
    const current=snapshot.entries[key];let desired=entry.value;
    if(template.stack!=='betaflight'){
@@ -110,6 +110,13 @@
    if(desired===current.value)unchanged.push(key);else changes.push({key,before:current.value,after:desired,type:current.type});
   }
   return {uid:snapshot.uid,changes,kept,unchanged,errors};
+ }
+ function selectTemplate(template,selectedKeys,forceKeys=[]){
+  if(!Array.isArray(selectedKeys)||!Array.isArray(forceKeys))fail('Parameter selection is invalid');
+  const selected=new Set(selectedKeys),forced=new Set(forceKeys),entries=Object.create(null);
+  for(const key of selected){if(!Object.hasOwn(template.entries,key))fail('Selected setting is not in the template: '+key);entries[key]=clone(template.entries[key]);}
+  for(const key of forced)if(!selected.has(key)||!keepPerDrone(template.stack,key))fail('Per-drone override is invalid: '+key);
+  return {...clone(template),entries,forceKeys:[...forced],selection:{selected:[...selected],templateSettingCount:Object.keys(template.entries).length}};
  }
  function stable(s){return JSON.stringify([s.uid,s.stack,s.board,s.firmware,s.armed,s.complete,s.systemId,s.componentId,s.encoding,s.rawDump||'',Object.entries(s.entries).sort(([a],[b])=>a.localeCompare(b))]);}
  async function digest(text){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(text));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
@@ -175,6 +182,14 @@
   }
   if(report.state==='running')report.state='finished';await ledger.save(clone(report));return report;
  }
- const api={fingerprint:stable,parse,makeTemplate,plan,value,paramValueBytes,keepPerDrone,exportText,demo,example,PracticeAdapter,run,clone};
+ function verifyRestart(report,snapshot){
+  validateSnapshot(snapshot);if(!report||report.evidence!=='hardware')fail('Choose a connected-device run');
+  const unit=report.units?.find(u=>u.uid===snapshot.uid);if(!unit)fail('This controller does not match the selected run');
+  if(snapshot.stack!==report.template.stack||snapshot.board!==report.template.board||snapshot.firmware!==report.template.firmware)fail('Controller stack, board or firmware differs from the run');
+  const desired=new Map((unit.preview?.changes||[]).map(c=>[c.key,c.after])),mismatches=[];
+  for(const key of unit.verified||[]){if(!snapshot.entries[key]||snapshot.entries[key].value!==desired.get(key))mismatches.push(key);}
+  return {state:mismatches.length?'restart-check-failed':'verified-persistent',checked:(unit.verified||[]).length,mismatches,observedAt:new Date().toISOString(),uid:snapshot.uid,board:snapshot.board,firmware:snapshot.firmware};
+ }
+ const api={fingerprint:stable,parse,makeTemplate,plan,selectTemplate,verifyRestart,value,paramValueBytes,keepPerDrone,exportText,demo,example,PracticeAdapter,run,clone};
  root.FieldKitDeployment=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(globalThis);
