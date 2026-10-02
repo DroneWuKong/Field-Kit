@@ -1,0 +1,33 @@
+{
+  "version": "0.4.2",
+  "versionCode": 8,
+  "package": "com.dronewukong.fieldtools",
+  "apk": {
+    "file": "Prismo-Field-Kit-0.4.2.apk",
+    "sizeBytes": 1870812,
+    "sha256": "e1ceaa53475740ae4fc7af4734f4ab6b933ab2e66590f38f39f5e3707f5d6236",
+    "signatureSchemes": ["v2", "v3"],
+    "signerCertificateSha256": "2e127ebcae2cfa8e81e529327b98ea2758050120ce692001136413f0437413c9",
+    "sameSignerAsPreviousRelease": true
+  },
+  "automatedChecks": {
+    "nodeTests": 50,
+    "uiWidthsPx": [360, 393, 800],
+    "toolCatalogCount": 21,
+    "guidedArduPilotEditor": "passed",
+    "connectedPx4ReadWriteRestart": "passed",
+    "androidBuild": "passed",
+    "workflowRun": 37013884102
+  },
+  "documentation": {
+    "quickStartPages": 8,
+    "toolGuidePages": 34,
+    "renderedParagraphs": 419,
+    "layoutBounds": "passed",
+    "screenshotCount": 37,
+    "quickStartSha256": "a2026ad9224456451f028b4f7f0fd9f49ad0f7378da44719d35d86a1e8a11859",
+    "toolGuideSha256": "33285ef29fd6e1c3b4da357e07bdc9e5dfc82894f3d8aab44a366b68be4ee3cb"
+  },
+  "physicalHardwareTestedByThisBuild": false,
+  "note": "Automated protocol fixtures do not replace testing representative Betaflight, ArduPilot and PX4 controllers with props removed."
+}

@@ -21,12 +21,12 @@ def para(c,text,x,y,w,style='body'):
 def header(c,doc,title,subtitle,key):
  c.bookmarkPage(key);c.addOutlineEntry(title,key,level=0,closed=False)
  c.setFillColor(TEAL);c.rect(0,782,612,10,fill=1,stroke=0)
- c.setFont('Bold',9);c.setFillColor(TEAL);c.drawString(40,758,'Prismo Field Kit  /  '+doc);c.setFont('Regular',8);c.setFillColor(MUTED);c.drawRightString(572,758,'v0.4.1  •  02 OCT 2026')
+ c.setFont('Bold',9);c.setFillColor(TEAL);c.drawString(40,758,'Prismo Field Kit  /  '+doc);c.setFont('Regular',8);c.setFillColor(MUTED);c.drawRightString(572,758,'v0.4.2  •  02 OCT 2026')
  size=25
  while pdfmetrics.stringWidth(title,'Bold',size)>532:size-=.5
  c.setFont('Bold',size);c.setFillColor(INK);c.drawString(40,716,title)
  para(c,subtitle,40,696,532,'body')
- c.setStrokeColor(BORDER);c.line(40,37,572,37);c.setFont('Regular',8);c.setFillColor(MUTED);c.drawString(40,23,'Prismo Field Kit 0.4.1  |  '+doc);c.drawRightString(572,23,str(c.getPageNumber()))
+ c.setStrokeColor(BORDER);c.line(40,37,572,37);c.setFont('Regular',8);c.setFillColor(MUTED);c.drawString(40,23,'Prismo Field Kit 0.4.2  |  '+doc);c.drawRightString(572,23,str(c.getPageNumber()))
 
 def note(c,label,text):
  c.setFillColor(HexColor('#f1f5f5'));c.roundRect(40,56,532,78,8,fill=1,stroke=0);c.setFillColor(TEAL);c.setFont('Bold',9);c.drawString(52,121,label);y=para(c,text,52,108,508,'small');assert y>=60,('note overflow',label,y)
@@ -65,25 +65,36 @@ def annotated(c,doc,title,subtitle,shot,cards,outcome,limit,key=None,caption=Non
 
 from human_copy import QUICK, TOOLS as COPY, NAVIGATION, REPORT, LAST_SECTIONS, DESCRIPTIONS
 COPY['configuration-deploy'] = (
-    'Use the configuration workbench',
-    'Read a connected controller, compare a reviewed setup and apply the approved settings.',
+    'Configure several drones',
+    'Read one controller, build or load a setup, compare it and apply only the settings you approve.',
     'configuration-workbench', [
         ('Choose Connected device', 'Select the flight stack. Use USB serial for Betaflight, or USB serial or MAVLink UDP for ArduPilot and PX4.'),
         ('Choose the physical link', 'Pick the USB port and baud rate, or enter the UDP listen port. Use an asset label if the controller does not provide a usable identity.'),
-        ('Connect and read', 'Read the actual controller before editing. For ArduPilot and PX4, open the parameter browser to search the complete live catalog.')],
+        ('Connect and read', 'Read the actual controller before editing. ArduPilot opens a guided editor; PX4 keeps the searchable expert catalog.')],
     ('Choose exactly what applies', 'Pull or load a template, compare it, then check the settings for this run. Identity and calibration stay with each aircraft by default unless you deliberately include one.'),
     ('The checks that remain', 'Connected mode has no license, admin, training or Practice requirement. The controller must be disarmed, and its identity, board and exact firmware must stay consistent.'),
-    'Configuration workbench inside the full 0.4.1 app. The port shown is a test fixture.')
+    'Connected configuration inside the full 0.4.2 app. The port shown is a test fixture.')
+COPY['guided-ardupilot'] = (
+    'Understand an ArduPilot change',
+    'The guided editor sits on top of the same parameter text used by the real compare-and-apply workflow.',
+    'guided-ardupilot', [
+        ('Search in normal words', 'Try speed, return, GPS or compass. The raw parameter name stays visible for technicians and documentation.'),
+        ('Include only what should change', 'The checkbox adds this value to the current template. Per-aircraft calibration and identity remain clearly marked.'),
+        ('Read the effect before comparing', 'The card shows current and target values, units and a familiar conversion when one is useful.')],
+    ('Use the right kind of control', 'Choices become dropdowns, bitmasks become checkboxes and numbers keep their published range and increment. Restart-required settings are marked.'),
+    ('Nothing is taken away', 'Refresh official descriptions when online. The built-in core descriptions work offline, unknown parameters remain editable and Expert / raw configuration text is always available.'),
+    'Guided ArduCopter example. The official description shown was supplied by the test metadata fixture.')
 QUICK.append((
     'Configure a connected flight controller',
-    'The full 0.4.1 app can pull, compare and apply settings through USB serial or MAVLink UDP.',
+    'The full 0.4.2 app can pull, compare and apply settings through USB serial or MAVLink UDP.',
     'configuration-workbench', [
         ('Choose Connected device', 'Select Betaflight, ArduPilot or PX4, then choose the physical link.'),
         ('Choose the port', 'For USB, pick the controller and baud rate. For MAVLink UDP, match the phone listen port with the sender.'),
         ('Connect and read', 'Pull and save the original configuration. Search the live parameters, compare one small template and select the exact differences to apply.')],
     ('Real reads and writes', 'Betaflight uses CLI commands. ArduPilot and PX4 use typed MAVLink parameters. Each run saves a backup, writes the selection and reads the complete controller again.'),
     ('Finish the proof', 'Power-cycle the controller, reconnect and tap Verify after power cycle. Then use Process next aircraft to keep the same template and work order.'),
-    'Connected screen inside the full 0.4.1 app. PX4 production fixture is an example port name.'))
+    'Connected screen inside the full 0.4.2 app. PX4 production fixture is an example port name.'))
+QUICK.append(COPY['guided-ardupilot'])
 COPY['config-deploy-results'] = (
     'Read the results for each unit',
     "A run is only as good as the connected controller's readback. Check the result before moving on.",
@@ -94,7 +105,7 @@ COPY['config-deploy-results'] = (
     ('Read the evidence label', 'Connected device reports are hardware evidence from that link. Practice remains available and keeps its software simulation label.'),
     'Example connected PX4 run produced by the protocol test fixture.')
 DESCRIPTIONS['configuration-deploy']='Pull, compare and apply a controller setup'
-ORDER = ['equipment-profiles', 'connection-doctor', 'connection-network', 'position-health', 'config-inspector', 'configuration-deploy', 'config-deploy-results', 'config-results', 'fc-matcher', 'elrs-info', 'range', 'range-result', 'rf-terrain', 'terrain-controls', 'mesh-planner', 'mesh-controls', 'fresnel', 'dipole', 'harmonics', 'vtx-config', 'unlock-vtx', 'channel-planner', 'closest-channel', 'coordinates', 'battery', 'signal-check', 'field-checklist', 'bench-export', 'saved-reports']
+ORDER = ['equipment-profiles', 'connection-doctor', 'connection-network', 'position-health', 'config-inspector', 'configuration-deploy', 'guided-ardupilot', 'config-deploy-results', 'config-results', 'fc-matcher', 'elrs-info', 'range', 'range-result', 'rf-terrain', 'terrain-controls', 'mesh-planner', 'mesh-controls', 'fresnel', 'dipole', 'harmonics', 'vtx-config', 'unlock-vtx', 'channel-planner', 'closest-channel', 'coordinates', 'battery', 'signal-check', 'field-checklist', 'bench-export', 'saved-reports']
 TOOLS = [(id,*COPY[id]) for id in ORDER]
 
 def draw_page(c,doc,item,key):
@@ -108,7 +119,8 @@ def index_page(c):
  rows=[['TOOL','PAGE','WHEN TO USE IT']]
  for id in ORDER:
   if id not in DESCRIPTIONS:continue
-  name=next(t[1] for t in M['catalog'] if t[0]==id)
+  names={'rf-terrain':'Check terrain clearance','mesh-planner':'Plan a mesh network','range':'Estimate radio range','fresnel':'Check path clearance','harmonics':'Check frequency conflicts','dipole':'Cut a dipole antenna','channel-planner':'Separate video channels','closest-channel':'Find the nearest video channel','vtx-config':'Make Betaflight VTX settings','unlock-vtx':'Build a VTX channel table','fc-matcher':'Identify a flight controller','elrs-info':'Look up ExpressLRS settings','coordinates':'Convert coordinates','battery':'Estimate battery time','signal-check':'Check signal readings','field-checklist':'Save bench notes','equipment-profiles':'My equipment','config-inspector':'Inspect a Betaflight configuration','configuration-deploy':'Configure several drones','connection-doctor':'Fix a connection','position-health':'Check position quality'}
+  name=names[id]
   rows.append([Paragraph(name,ST['index']),Paragraph(f'<link href="#tool-{id}" color="#007eaa"><b>{page_by_id[id]}</b></link>',ST['index']),Paragraph(DESCRIPTIONS[id],ST['index'])])
  assert len(rows)==22
  table=Table(rows,colWidths=[205,42,285],rowHeights=[25]+[23]*21)
@@ -130,7 +142,7 @@ def last_page(c):
 
 for filename,doc in [('Prismo-Field-Kit-Quick-Start.pdf','Quick start'),('Prismo-Field-Kit-Tool-Guide.pdf','Tool guide')]:
  c=canvas.Canvas(str(OUT/filename),pagesize=(612,792),pageCompression=1)
- c.setTitle('Prismo Field Kit 0.4.1 - '+doc);c.setAuthor('Prismo')
+ c.setTitle('Prismo Field Kit 0.4.2 - '+doc);c.setAuthor('Prismo')
  c.setSubject('Illustrated instructions for Field Kit, with numbered screenshot arrows')
  if doc=='Quick start':
   for i,item in enumerate(QUICK):draw_page(c,doc,item,'quick-'+str(i))

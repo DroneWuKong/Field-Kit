@@ -1,5 +1,5 @@
 {
-  "version": "0.4.0",
+  "version": "0.4.2",
   "shots": {
     "home": {
       "file": "home.png",
@@ -7,14 +7,14 @@
       "height": 852,
       "targets": [
         {
-          "selector": "[data-flow=hardware]",
-          "x": 368,
-          "y": 415.125
+          "selector": "[data-flow=configure]",
+          "x": 352,
+          "y": 442
         },
         {
           "selector": "#kit-home-equipment button",
-          "x": 353,
-          "y": 293.1875
+          "x": 348,
+          "y": 313
         },
         {
           "selector": "#kit-nav-tools",
@@ -788,6 +788,16 @@
           "x": 245,
           "y": 630
         }
+      ]
+    },
+    "guided-ardupilot": {
+      "file": "guided-ardupilot.png",
+      "width": 393,
+      "height": 774,
+      "targets": [
+        {"selector": "#kit-deploy-parameter-search", "x": 330, "y": 226},
+        {"selector": ".kit-param-include", "x": 268, "y": 454},
+        {"selector": ".kit-param-value", "x": 310, "y": 626}
       ]
     },
     "configuration-results": {
