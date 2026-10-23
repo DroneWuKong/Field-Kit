@@ -7,7 +7,7 @@ installation are not needed on the user's PC.
 
 ## Run
 
-1. Download the Windows ZIP from the Field Kit release.
+1. [Download the Windows x64 ZIP](https://github.com/DroneWuKong/Field-Kit/releases/download/horizon-v0.2.0-windows/Prismo-Field-Kit-Horizon-0.2.0-windows-x64.zip) from the Field Kit release.
 2. Extract the entire folder. Keep `PrismoFieldKit.exe` and `_internal` together.
 3. Double-click `PrismoFieldKit.exe`; the planner opens in your default browser.
 4. Keep the console window open. Press Ctrl+C to stop it.
@@ -62,3 +62,20 @@ Historical Linux/Android receipts remain unchanged.
 
 References: [PyInstaller platform builds](https://pyinstaller.org/en/stable/usage.html#supporting-multiple-operating-systems)
 and [frozen multiprocessing](https://pyinstaller.org/en/stable/common-issues-and-pitfalls.html#multi-processing).
+
+## Published build evidence
+
+The first Windows ZIP was built from `cf3f5fbc358aa6b61f60fbc5eb65fd630c8b2268`
+and passed [Windows workflow 39975617807](https://github.com/DroneWuKong/Field-Kit/actions/runs/39975617807).
+It completed a 345-sample synthetic route with frozen workers, raster import,
+offline NAVD88→EGM96 conversion, cancellation, duplicate launch and restart
+persistence. Both interfaces were served. The test data directory contained
+spaces and a non-ASCII character. All 737 files listed in the archive's checksum
+manifest matched after download.
+
+ZIP size: 83,373,145 bytes. SHA256:
+`b5ca55b224eea716098fa6c9c795472022f79d9f50cb8b275c4069d17ad6adee`.
+The package includes the machine-readable Windows receipt. It is unsigned and
+has not been installed on the user's physical Windows PC. Earlier failed build
+runs are retained: the asset path and Windows temporary-file compatibility issues
+were fixed before the successful qualification.

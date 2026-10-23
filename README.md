@@ -14,7 +14,8 @@ It is not yet a complete Gradle Android source project.
 
 ## Windows
 
-The native Windows x64 ZIP includes both apps and the terrain runtime. Extract
+[Download the Windows x64 ZIP](https://github.com/DroneWuKong/Field-Kit/releases/download/horizon-v0.2.0-windows/Prismo-Field-Kit-Horizon-0.2.0-windows-x64.zip) (about 80 MiB).
+The native package includes both apps and the terrain runtime. Extract
 it and double-click `PrismoFieldKit.exe`; no Docker or Python installation is
 needed. See [Windows download, startup and build details](docs/WINDOWS.md).
 
