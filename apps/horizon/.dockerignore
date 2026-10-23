@@ -1,0 +1,12 @@
+.git
+.venv
+frontend/node_modules
+frontend/dist
+frontend/test-results
+frontend/playwright-report
+data
+release
+tests
+.pytest_cache
+.ruff_cache
+**/__pycache__

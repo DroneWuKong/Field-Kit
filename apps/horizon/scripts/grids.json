@@ -1,0 +1,5 @@
+[
+  {"name":"us_nga_egm96_15.tif","sha256":"db493027562c9b004d7220fa881f5603adada4e1c5029b933fa7de4547b0e78d","source":"https://cdn.proj.org/us_nga_egm96_15.tif"},
+  {"name":"us_noaa_g1999u03.tif","sha256":"02f374fa1622d5c801e9594e33909924b706d7e385892896f73cbdef638672c7","source":"https://cdn.proj.org/us_noaa_g1999u03.tif"},
+  {"name":"us_noaa_nadcon5_nad83_1986_nad83_harn_conus.tif","sha256":"e12ac2e886edafe616e0994c610ad3daa01db17c00d0e9938145d956f249fc2f","source":"https://cdn.proj.org/us_noaa_nadcon5_nad83_1986_nad83_harn_conus.tif"}
+]

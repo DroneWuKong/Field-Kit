@@ -1,0 +1,34 @@
+{
+  "platform": "Linux-7.0.0-28-generic-x86_64-with-glibc2.39",
+  "processor": "x86_64",
+  "terrain_sha256": "3a6a5af373aa1f019e217c90e0b1c8b27aea3bb11930aa67afceb20e8a7877cb",
+  "assumed_radios": true,
+  "benchmarks": [
+    {
+      "kind": "route",
+      "elapsed_s": 3.863565062172711,
+      "samples": 892,
+      "summary": {
+        "green": 126,
+        "amber": 280,
+        "red": 486
+      },
+      "route_step_m": 25,
+      "profile_step_m": 10,
+      "coverage_cell_m": null
+    },
+    {
+      "kind": "coverage",
+      "elapsed_s": 32.722720119170845,
+      "samples": 10000,
+      "summary": {
+        "red": 3334,
+        "amber": 6001,
+        "green": 665
+      },
+      "route_step_m": 25,
+      "profile_step_m": 10,
+      "coverage_cell_m": 200
+    }
+  ]
+}
