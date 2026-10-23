@@ -11,6 +11,8 @@ function Invoke-Checked {
 $BuildRoot = Join-Path $WorkspaceRoot 'build-private/windows'
 $DistRoot = Join-Path $BuildRoot 'dist'
 $GridRoot = Join-Path $BuildRoot 'grids'
+$FrontendRoot = Join-Path $WorkspaceRoot 'apps/horizon/frontend/dist'
+$AssetsRoot = Join-Path $WorkspaceRoot 'source/assets'
 New-Item -ItemType Directory -Force $BuildRoot | Out-Null
 Invoke-Checked python @('-m', 'pip', 'install', '--require-hashes', '-r', 'apps/horizon/requirements.lock')
 Invoke-Checked python @('-m', 'pip', 'install', '--no-deps', './apps/horizon')
@@ -22,7 +24,7 @@ Invoke-Checked python @('-m', 'PyInstaller', '--noconfirm', '--clean', '--onedir
     '--name', 'PrismoFieldKit', '--distpath', $DistRoot, '--workpath', (Join-Path $BuildRoot 'work'),
     '--specpath', $BuildRoot, '--collect-all', 'rasterio', '--collect-all', 'pyproj',
     '--collect-all', 'uvicorn', '--collect-all', 'horizon',
-    '--add-data', 'apps/horizon/frontend/dist:frontend', '--add-data', 'source/assets:fieldkit',
+    '--add-data', "${FrontendRoot}:frontend", '--add-data', "${AssetsRoot}:fieldkit",
     '--add-data', "${GridRoot}:grids", 'apps/horizon/windows/launcher.py')
 $AppRoot = Join-Path $DistRoot 'PrismoFieldKit'
 Copy-Item apps/horizon/windows/README.txt (Join-Path $AppRoot 'README.txt')
