@@ -1,6 +1,6 @@
 # Horizon — offline radio mission planner
 
-A local browser app for drawing aerial waypoint missions and predicting terrain clearance and radio-link margins at 490, 915 and 5800 MHz. Linux x86-64 is the initial supported package. The analysis engine and versioned HTTP API are independent of the UI and serve the Prismo Field Kit planning workspace.
+A local browser app for drawing aerial waypoint missions and predicting terrain clearance and radio-link margins at 490, 915 and 5800 MHz. Linux x86-64 and a portable Windows x64 executable are packaged. See the parent repository’s `docs/WINDOWS.md` for Windows startup and qualification. The analysis engine and versioned HTTP API are independent of the UI and serve the Prismo Field Kit planning workspace.
 
 ## Start the packaged app
 

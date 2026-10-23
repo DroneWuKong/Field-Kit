@@ -1,5 +1,9 @@
 # Current consolidated build — 23 October 2026
 
+For the native Windows executable, use [the Windows build and qualification
+guide](WINDOWS.md). Windows evidence is produced by an actual Windows runner;
+Linux tests are not substituted for native executable checks.
+
 Run the root `npm test` for model, configuration, regression and planning exchange
 checks. Current browser evidence writes to `build-private/validation/`, leaving
 historical `output/` receipts and PDF screenshots unchanged.

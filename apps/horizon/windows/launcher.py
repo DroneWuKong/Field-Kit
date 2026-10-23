@@ -7,13 +7,13 @@ if __name__ == "__main__":
 import argparse
 import json
 import os
-from pathlib import Path
 import socket
 import sys
 import threading
 import time
 import urllib.request
 import webbrowser
+from pathlib import Path
 
 
 def main():
@@ -50,6 +50,7 @@ def main():
     os.environ.setdefault("OMP_NUM_THREADS", "1")
     data.mkdir(parents=True, exist_ok=True)
     import uvicorn
+
     from horizon.api import create_app
     app = create_app(data, bundle / "frontend")
 

@@ -12,7 +12,13 @@ The original native Android source module is missing; this repository contains
 recovered web assets, the original compiled APK and the later asset updates.
 It is not yet a complete Gradle Android source project.
 
-## Open the combined desktop workspace
+## Windows
+
+The native Windows x64 ZIP includes both apps and the terrain runtime. Extract
+it and double-click `PrismoFieldKit.exe`; no Docker or Python installation is
+needed. See [Windows download, startup and build details](docs/WINDOWS.md).
+
+## Open the combined desktop workspace on Linux
 
 ```sh
 ./scripts/start-planner.sh
