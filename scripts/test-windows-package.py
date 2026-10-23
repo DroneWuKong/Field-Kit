@@ -8,6 +8,7 @@ import socket
 import subprocess
 import tempfile
 import time
+import urllib.error
 import urllib.request
 
 
@@ -38,9 +39,14 @@ def main():
             payload = json.dumps(body).encode() if body is not None and not isinstance(body, bytes) else body
             req = urllib.request.Request(base + path, data=payload,
                                          headers={'Content-Type': content_type} if payload is not None else {})
-            with urllib.request.urlopen(req, timeout=20) as response:
-                value = response.read()
-                return json.loads(value) if 'application/json' in response.headers.get('Content-Type', '') else value
+            try:
+                with urllib.request.urlopen(req, timeout=20) as response:
+                    value = response.read()
+                    return json.loads(value) if 'application/json' in response.headers.get('Content-Type', '') else value
+            except urllib.error.HTTPError as exc:
+                detail = exc.read().decode('utf-8', errors='replace')
+                time.sleep(1)  # Let the server flush its exception before the process is stopped.
+                raise RuntimeError(f'{path}: HTTP {exc.code}: {detail}') from exc
 
         def ready(process):
             for _ in range(120):

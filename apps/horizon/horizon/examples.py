@@ -17,7 +17,7 @@ def create_demo(store):
     x, y = np.meshgrid(lon, lat)
     h = 180 + 11 * np.sin((x + 88) * 100) * np.cos((y - 42.28) * 90)
     h += 83 * np.exp(-(((x + 87.987) / 0.007) ** 2)) * (0.4 + 0.6 * np.exp(-(((y - 42.27) / 0.034) ** 2)))
-    with tempfile.NamedTemporaryFile(suffix=".tif", dir=store.root / "downloads") as f:
+    with tempfile.NamedTemporaryFile(suffix=".tif", dir=store.root / "downloads", delete_on_close=False) as f:
         with rasterio.open(
             f.name,
             "w",
