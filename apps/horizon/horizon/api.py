@@ -156,7 +156,7 @@ def create_app(root=None, frontend=None):
 
     @app.post("/api/v1/terrain/import")
     def terrain_import(file: UploadFile = File(), datum: Datum = Form()):
-        with tempfile.NamedTemporaryFile(suffix=".tif", dir=store.root / "downloads") as tmp:
+        with tempfile.NamedTemporaryFile(suffix=".tif", dir=store.root / "downloads", delete_on_close=False) as tmp:
             size = 0
             while data := file.file.read(1024 * 1024):
                 size += len(data)
@@ -270,7 +270,7 @@ def create_app(root=None, frontend=None):
     def import_basemap(file: UploadFile = File(), attribution: str = Form(default="User-supplied basemap")):
         from .terrain import file_hash
 
-        with tempfile.NamedTemporaryFile(dir=store.root / "downloads") as tmp:
+        with tempfile.NamedTemporaryFile(dir=store.root / "downloads", delete_on_close=False) as tmp:
             header = file.file.read(127)
             if len(header) != 127 or header[:8] != b"PMTiles\x03" or header[99] not in {2, 3, 4}:
                 raise ValueError("Expected a raster PNG/JPEG/WebP PMTiles v3 archive")
