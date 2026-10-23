@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Activity, ArrowDownToLine, ArrowUpFromLine, Check, ChevronDown, Crosshair, FileText, FolderOpen, Layers, LocateFixed, MapPin, Mountain, Plus, Radar, RadioTower, Redo2, Route, Save, Settings2, Trash2, Undo2, X, Zap } from 'lucide-react';
+import { Activity, ArrowDownToLine, ArrowUpFromLine, Check, ChevronDown, Crosshair, FileText, FolderOpen, Layers, LocateFixed, MapPin, Maximize2, Minimize2, Mountain, Plus, Radar, RadioTower, Redo2, Route, Save, Settings2, Trash2, Undo2, X, Zap } from 'lucide-react';
 import MapView from './MapView';
 import { RadioProfileChart, RouteChart } from './Charts';
 import { api, colors, download, format, json, stateFor, stateLabels, type Area, type Job, type Mode, type Project, type Radio, type Result, type Sample, type TerrainRecord, type Waypoint } from './types';
@@ -15,6 +15,9 @@ const uid = () => crypto.randomUUID();
 export default function App() {
   const [project, setProject] = useState<Project | null>(null), projectRef = useRef<Project | null>(null);
   const [projects, setProjects] = useState<Project[]>([]), [terrain, setTerrain] = useState<TerrainRecord[]>([]);
+  const [focusMap, setFocusMap] = useState(false);
+  const [palette, setPalette] = useState<{low: number; high: number; colors: string[]; available: boolean; contour_m: number} | null>(null);
+  useEffect(() => { let cancelled = false; setPalette(null); if (project?.terrain_ids.length) api<typeof palette>(`/terrain/palette?ids=${project.terrain_ids.join(',')}`).then(p => { if (!cancelled) setPalette(p); }).catch(() => {}); return () => { cancelled = true; }; }, [project?.terrain_ids.join(','), terrain]);
   const [tab, setTab] = useState<'plan' | 'radios' | 'terrain' | 'settings'>('plan');
   const [mode, setMode] = useState<Mode>('navigate'), [selected, setSelected] = useState<number | null>(null);
   const [band, setBand] = useState('combined'), [fitKey, setFitKey] = useState(0);
@@ -176,7 +179,7 @@ export default function App() {
   const patchRadio = (id: string, fn: (r: Radio) => void) => edit(p => { const r = p.radios.find(r => r.id === id); if (r) fn(r); });
 
   if (!project) return <main className="loading"><Radar size={40}/><h1>Horizon</h1><p>{error || 'Opening your local workspace…'}</p></main>;
-  return <div className="app-shell">
+  return <div className={`app-shell ${focusMap ? "map-focus" : ""}`}>
     {busy && <div className="busy-overlay" role="status">Working…</div>}
     <header className="topbar"><div className="brand"><span className="brand-mark"><Radar size={24}/></span><strong>HORIZON<span>MISSION PLANNER</span></strong></div>
       <div className="project-switch"><FolderOpen size={16}/><select aria-label="Open project" value={project.id} onChange={e => void switchProject(e.target.value)}><option value={project.id}>{project.name}</option>{projects.filter(p => p.id !== project.id).map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select><ChevronDown size={12}/></div>
@@ -185,7 +188,7 @@ export default function App() {
     {error && <div role="alert" className="error-banner"><span>{error}</span><button aria-label="Dismiss error" onClick={() => setError('')}><X size={14}/></button></div>}
     <div className="workspace">
       <aside className="sidebar">
-        <div className="sidebar-heading"><span className="eyebrow">MISSION WORKSPACE</span><h1>Plan with perspective.</h1><p>Terrain, altitude, and the links between.</p></div>
+        <div className="sidebar-heading"><span className="eyebrow">MISSION WORKSPACE</span><h1>Build your flight plan.</h1><p>Set the route. Understand every link.</p></div>
         <nav className="tabs" aria-label="Configuration sections">{([['plan', Route, 'Route'], ['radios', RadioTower, 'Radios'], ['terrain', Mountain, 'Terrain'], ['settings', Settings2, 'Model']] as const).map(([t, Icon, label]) => <button key={t} className={tab === t ? 'active' : ''} onClick={() => setTab(t)}><Icon size={16}/>{label}</button>)}</nav>
         <div className="sidebar-scroll">
           {tab === 'plan' && <>
@@ -250,6 +253,8 @@ export default function App() {
       </aside>
       <main className="main-pane">
         <section className="map-area">
+          <div className="map-view-actions"><span><Mountain size={13}/> TERRAIN VIEW</span><button aria-label={focusMap ? "Restore panels" : "Expand map"} title={focusMap ? "Restore panels" : "Expand map"} onClick={() => setFocusMap(v => !v)}>{focusMap ? <Minimize2 size={16}/> : <Maximize2 size={16}/>}</button></div>
+          {palette?.available && <div className="elevation-legend"><div><Mountain size={12}/><b>Elevation</b><span>m · EGM96</span></div><div className="elevation-ramp" style={{background: `linear-gradient(90deg, ${palette.colors.join(',')})`}}/><div className="elevation-ticks"><span>≤ {palette.low}</span><span>{Math.round((palette.low + palette.high) / 2)}</span><span>≥ {palette.high}</span></div><small>Sampled terrain range · {palette.contour_m} m contours</small></div>}
           <MapView project={project} terrain={terrain} result={result} previous={previous} band={band} mode={mode} selected={selected} fitKey={fitKey} onPoint={addPoint} onMove={movePoint} onSelect={setSelected} onSample={selectSample} onBounds={a => { viewport.current = a; }} onError={fail} basemap={basemap}/>
           <div className="map-top"><div className="map-tools"><button className={mode === 'navigate' ? 'active' : ''} title="Navigate" onClick={() => setMode('navigate')}><Crosshair size={17}/></button><button disabled={locked} className={mode === 'draw' ? 'active' : ''} title="Draw route" onClick={() => setMode('draw')}><Route size={17}/></button><button className={mode === 'station' ? 'active' : ''} title="Place ground antenna" onClick={() => setMode('station')}><RadioTower size={17}/></button><span/><button title="Fit route" onClick={() => setFitKey(v => v + 1)}><LocateFixed size={17}/></button></div>
             <div className="map-context"><span className="eyebrow">TERRAIN + RADIO COVERAGE</span><b>{synthetic ? 'Synthetic ridge study' : project.terrain_ids.length ? 'USGS / imported elevation' : 'Prepare your operating area'}</b><small>{synthetic ? 'Demonstration data · not real terrain' : project.terrain_ids.length ? `${project.terrain_ids.length} local elevation tiles` : 'Add 3DEP terrain from the Terrain tab'}</small></div>
@@ -263,7 +268,7 @@ export default function App() {
         <section className="route-profile"><div className="profile-header"><div><span className="eyebrow">FLIGHT PROFILE</span><h2>Terrain & link margin</h2></div><div className="profile-key"><span><i style={{ background: '#52634a' }}/>Terrain</span><span><i style={{ background: '#60dbad' }}/>Planned altitude</span>{result?.kind === 'altitude' && <span><i style={{ background: '#a9b8ff' }}/>Suggested AGL</span>}</div><button disabled={!result} onClick={() => setPrevious(result ? structuredClone(result) : null)}>Keep for comparison</button></div><RouteChart result={result} band={band} onSelect={selectSample} selected={sampleIndex}/></section>
       </main>
       <aside className="inspector">
-        <div className="inspector-heading"><span className="eyebrow">MISSION ANALYSIS</span><h2>Know your connection.</h2></div>
+        <div className="inspector-heading"><span className="eyebrow">MISSION ANALYSIS</span><h2>Link intelligence.</h2></div>
         <button className="primary analyze-button" disabled={active || busy || !project.waypoints.length} onClick={() => run('route')}><Zap size={17}/>{active ? 'Analysis in progress' : 'Analyze route'}</button>
         {active && <div className="job-progress"><progress value={job.done} max={job.total || 1}/><span>{job.total ? `${job.done} / ${job.total}` : 'Preparing…'}</span><button onClick={async () => { try { setJob(await api(`/jobs/${job.id}`, { method: 'DELETE' })); } catch (e) { fail(e); } }}>Cancel</button></div>}
         <div className="analysis-summary"><span className={`status-orb ${result ? 'ready' : ''}`}><Activity size={22}/></span><div><b>{result ? 'Prediction complete' : 'Ready when you are'}</b><p>{result ? `${result.samples.length.toLocaleString()} positions evaluated` : 'Draw or import a route to begin.'}</p></div></div>

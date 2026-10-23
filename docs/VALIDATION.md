@@ -25,3 +25,9 @@ See `benchmark.json` and `scripts/benchmark.py` for a reproducible workload. A 2
 ## Failures found and corrected
 
 Browser validation identified and fixed the MapLibre worker URL, stale job-result polling, loading/edit races and project-switch persistence. Packaged execution identified a missing GDAL runtime dependency. A transient Chromium `ERR_NETWORK_CHANGED` during Docker network setup was followed by a full clean rerun after the network stabilized; assertions were not relaxed. Task-owned superseded image layers were removed when the shared host root filesystem filled; other projects and historical container receipts were retained.
+
+## 0.1.1 visual update
+
+Added a navy/sand interface, shared dataset elevation palette, contour legend, clearer waypoint altitude labels, higher-contrast route casing, shaded charts and expand/restore map controls. Color scaling uses a sampled range across the selected datasets, consistently across map tiles; the legend identifies that range and its datum. This display layer does not change radio propagation or native DEM sampling in the analysis engine.
+
+Validation: 54 Python tests passed, three browser workflows passed, and a 393 px mobile browser check passed expand/restore and horizontal-overflow checks. The desktop and mobile screenshots were inspected. Updated source review of Field Kit is in `FIELD_KIT_CONSOLIDATION.md`; Field Kit was not modified.

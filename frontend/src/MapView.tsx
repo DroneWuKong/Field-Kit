@@ -27,7 +27,7 @@ export default function MapView(props: Props) {
   const markers = useRef<Marker[]>([]);
   useEffect(() => {
     const m = new Map({ container: container.current!, center: [props.project.station.lon, props.project.station.lat], zoom: 11,
-      style: { version: 8, sources: {}, layers: [{ id: 'background', type: 'background', paint: { 'background-color': '#152a30' } }] },
+      style: { version: 8, sources: {}, layers: [{ id: 'background', type: 'background', paint: { 'background-color': '#101c2b' } }] },
       attributionControl: false, maxZoom: 18, minZoom: 3 });
     m.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
     m.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
@@ -48,14 +48,15 @@ export default function MapView(props: Props) {
     });
     m.on('load', () => {
       m.addSource('terrain-raster', { type: 'raster', tiles: [], tileSize: 256, attribution: 'USGS 3DEP / selected terrain · bare earth' });
-      m.addLayer({ id: 'terrain-raster', type: 'raster', source: 'terrain-raster', paint: { 'raster-opacity': 0.65, 'raster-fade-duration': 0 } });
+      m.addLayer({ id: 'terrain-raster', type: 'raster', source: 'terrain-raster', paint: { 'raster-opacity': 0.94, 'raster-fade-duration': 0 } });
       for (const id of ['coverage', 'previous', 'route', 'route-analysis', 'footprints', 'fences']) m.addSource(id, { type: 'geojson', data: collection([]) });
       m.addLayer({ id: 'coverage', type: 'fill', source: 'coverage', paint: { 'fill-color': ['get', 'color'], 'fill-opacity': 0.27 } });
       m.addLayer({ id: 'footprints', type: 'line', source: 'footprints', paint: { 'line-color': '#779b96', 'line-dasharray': [3, 3], 'line-width': 1 } });
       m.addLayer({ id: 'fences', type: 'line', source: 'fences', paint: { 'line-color': '#efad71', 'line-dasharray': [2, 2], 'line-width': 2 } });
       m.addLayer({ id: 'previous', type: 'line', source: 'previous', paint: { 'line-color': '#e6edf3', 'line-opacity': 0.5, 'line-width': 2, 'line-dasharray': [2, 3] } });
-      m.addLayer({ id: 'route', type: 'line', source: 'route', paint: { 'line-color': '#78bbc6', 'line-width': 3, 'line-dasharray': [2, 2] } });
-      m.addLayer({ id: 'route-analysis', type: 'line', source: 'route-analysis', paint: { 'line-color': ['get', 'color'], 'line-width': 5 } });
+      m.addLayer({ id: 'route-casing', type: 'line', source: 'route', paint: { 'line-color': '#08121e', 'line-width': 7, 'line-opacity': 0.75 } });
+      m.addLayer({ id: 'route', type: 'line', source: 'route', paint: { 'line-color': '#f3d58c', 'line-width': 2.5 } });
+      m.addLayer({ id: 'route-analysis', type: 'line', source: 'route-analysis', paint: { 'line-color': ['get', 'color'], 'line-width': 3.5 } });
       update(m, latest.current);
       m.fire('moveend');
     });
@@ -121,7 +122,7 @@ export default function MapView(props: Props) {
     markers.current.forEach(marker => marker.remove()); markers.current = [];
     const add = (kind: string, index: number, lon: number, lat: number, label: string, title: string) => {
       const el = document.createElement('button'); el.className = `map-pin ${kind} ${index === props.selected && kind === 'waypoint' ? 'selected' : ''}`;
-      el.textContent = label; el.title = title; el.setAttribute('aria-label', title);
+      el.textContent = label; if (kind === 'waypoint') { const w = props.project.waypoints[index]; const badge = document.createElement('span'); badge.className = 'pin-altitude'; badge.textContent = `${w.altitude_m} m ${w.altitude_mode === 'home' ? 'REL' : w.altitude_mode.toUpperCase()}`; el.appendChild(badge); } el.title = title; el.setAttribute('aria-label', title);
       el.onclick = e => { e.stopPropagation(); if (kind === 'waypoint') latest.current.onSelect(index); };
       const marker = new Marker({ element: el, draggable: !props.project.source?.readonly }).setLngLat([lon, lat]).addTo(m);
       marker.on('dragend', () => { const pos = marker.getLngLat(); latest.current.onMove(kind, index, pos.lng, pos.lat); });

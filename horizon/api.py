@@ -14,7 +14,7 @@ from . import __version__
 from .catalog import search
 from .engine import Engine
 from .jobs import Jobs
-from .maps import tile
+from .maps import display_range, tile
 from .missions import export_mission, import_mission
 from .models import AnalysisRequest, CoverageRequest, Datum, Model, Project
 from .observations import compare
@@ -176,6 +176,11 @@ def create_app(root=None, frontend=None):
             return {"altitude_m": t.point(body.lon, body.lat), "datum": "EGM96"}
         finally:
             t.close()
+
+    @app.get("/api/v1/terrain/palette")
+    def terrain_palette(ids: str = Query(default="")):
+        revision = sum(p.stat().st_mtime_ns for p in (store.root / "grids").glob("*.tif"))
+        return display_range(str(store.root), tuple(sorted(filter(None, ids.split(",")))), revision)
 
     @app.get("/api/v1/terrain/tiles/{z}/{x}/{y}.png")
     def terrain_tile(z: int, x: int, y: int, ids: str = Query(default="")):

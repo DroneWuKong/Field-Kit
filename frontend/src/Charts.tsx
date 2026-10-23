@@ -16,8 +16,9 @@ export function RouteChart({ result, band, onSelect, selected }: { result: Resul
   });
   if (current) terrainPaths.push(current + ` L${lastX},150 Z`);
   return <svg className="route-chart" viewBox="0 0 980 180" role="img" aria-label="Route altitude and terrain profile">
-    {[0, 1, 2, 3].map(i => { const z = minZ + (maxZ - minZ) * i / 3; return <g key={i}><line x1="50" x2="950" y1={yy(z)} y2={yy(z)} stroke="#2b3b42"/><text x="4" y={yy(z) + 4}>{z.toFixed(0)} m</text></g>; })}
-    {terrainPaths.map((d, i) => <path key={`terrain-${i}`} d={d} fill="#384c47"/>)}
+    <defs><linearGradient id="terrain-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#65aaa9" stopOpacity=".48"/><stop offset="100%" stopColor="#28435d" stopOpacity=".12"/></linearGradient></defs>
+    {[0, 1, 2, 3].map(i => { const z = minZ + (maxZ - minZ) * i / 3; return <g key={i}><line x1="50" x2="950" y1={yy(z)} y2={yy(z)} stroke="#29384c" strokeDasharray="3 5"/><text x="4" y={yy(z) + 4}>{z.toFixed(0)} m</text></g>; })}
+    {terrainPaths.map((d, i) => <path key={`terrain-${i}`} d={d} fill="url(#terrain-fill)" stroke="#77abaa" strokeWidth="1"/>)}
     {samples.map((s, i) => {
       if (!i) return null; const prev = samples[i - 1];
       return <g key={i}>
@@ -45,9 +46,9 @@ export function RadioProfileChart({ sample, band, fraction }: { sample: Sample |
   const upper = p.line_m.map((v, i) => v + f1[i] * fraction);
   const lower = p.line_m.map((v, i) => v - f1[i] * fraction);
   return <><svg viewBox="0 0 530 155" className="radio-chart" role="img" aria-label="Radio path, curved terrain and Fresnel zone">
-    <path d={line(upper) + lower.map((v, i) => `L${x(lower.length - 1 - i)},${y(lower[lower.length - 1 - i])}`).join(' ') + 'Z'} fill="#71cfc324"/>
-    <path d={line(p.curved_terrain_m) + ' L498,130 L38,130 Z'} fill="#52634a" stroke="#91a780"/>
-    <path d={line(p.line_m)} stroke="#b6ece4" fill="none" strokeWidth="1.5" strokeDasharray="4 3"/>
+    <path d={line(upper) + lower.map((v, i) => `L${x(lower.length - 1 - i)},${y(lower[lower.length - 1 - i])}`).join(' ') + 'Z'} fill="#9c9bfa28" stroke="#b4b1f3" strokeWidth=".6"/>
+    <path d={line(p.curved_terrain_m) + ' L498,130 L38,130 Z'} fill="#304f60" stroke="#77abaa"/>
+    <path d={line(p.line_m)} stroke="#f3d58c" fill="none" strokeWidth="1.5" strokeDasharray="4 3"/>
     <text x="38" y="148">Ground antenna</text><text x="498" y="148" textAnchor="end">Aircraft · {format(length / 1000)} km</text>
   </svg><p className="caption">Curvature-adjusted terrain · {(fraction * 100).toFixed(0)}% Fresnel zone · {p.calculation_points.toLocaleString()} terrain samples</p></>;
 }
