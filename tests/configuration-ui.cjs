@@ -1,6 +1,7 @@
 const {chromium}=require('playwright');
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
-const root=path.resolve(__dirname,'../source/assets'),out=path.resolve(__dirname,'../output/configuration');
+const root=path.resolve(__dirname,'../source/assets'),out=path.resolve(__dirname,'../build-private/validation');
+fs.mkdirSync(out,{recursive:true});
 (async()=>{const browser=await chromium.launch({headless:true,args:['--no-sandbox']});const errors=[],checks=[];try{
 const ctx=await browser.newContext({viewport:{width:393,height:852},deviceScaleFactor:2,acceptDownloads:true});const p=await ctx.newPage();p.on('pageerror',e=>errors.push(e.message));
 await p.route('**/*',r=>{const u=new URL(r.request().url());if(u.host!=='appassets.androidplatform.net')return r.abort();const f=path.resolve(root,u.pathname.replace(/^\/assets\//,''));if(!f.startsWith(root+path.sep)||!fs.existsSync(f))return r.fulfill({status:404});return r.fulfill({path:f,contentType:({'.js':'application/javascript','.html':'text/html','.css':'text/css','.json':'application/json','.woff2':'font/woff2'})[path.extname(f)]});});

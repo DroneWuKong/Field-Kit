@@ -1,6 +1,6 @@
 # Horizon — offline radio mission planner
 
-A local browser app for drawing aerial waypoint missions and predicting terrain clearance and radio-link margins at 490, 915 and 5800 MHz. Linux x86-64 is the initial supported package. The analysis engine and versioned HTTP API are independent of the UI for future Prismo integration.
+A local browser app for drawing aerial waypoint missions and predicting terrain clearance and radio-link margins at 490, 915 and 5800 MHz. Linux x86-64 is the initial supported package. The analysis engine and versioned HTTP API are independent of the UI and serve the Prismo Field Kit planning workspace.
 
 ## Start the packaged app
 
@@ -25,6 +25,20 @@ The package includes the application, map renderer, fonts supplied by the operat
 
 Green means the modeled required links meet the configured margin and Fresnel clearance. Amber indicates insufficient reserve/clearance, red a modeled failure, and gray an unknown result. These predictions do not certify operational range. Bare-earth DEMs omit buildings and vegetation; interference, antenna orientation, multipath and vehicle dynamics are not modeled.
 
+## Field Kit exchange
+
+This app now lives in the Field Kit repository at `apps/horizon`. Use the parent
+repository for new commits. The prior standalone repository remains untouched.
+The header opens Field Kit on the same local service. **Radios → Import equipment**
+previews a shared equipment file; applying it is undoable and invalidates old
+predictions. Unknown power/sensitivity stay unknown. Original Field Kit mW values,
+serial, battery details and revision remain in the source snapshot.
+
+**Export plan to Field Kit** writes `prismo.plan.v1`: an editable project snapshot
+labeled predicted. Field Kit keeps it in Records. Terrain/basemap files and analysis
+results are not embedded. Import that file through **Open project JSON** to create
+a new local copy; no existing project is overwritten.
+
 ## Development
 
 Python 3.12+, Node 22+, and `uv` are required.
@@ -47,7 +61,7 @@ npx playwright install chromium
 npx playwright test
 ```
 
-`./scripts/package.sh` builds the Docker image and creates a checksummed Linux archive under `release/`. Building requires internet; starting the resulting archive does not. UI types derive from FastAPI OpenAPI (`npm run types`, service on port 8765).
+`./scripts/package.sh` builds from the parent Field Kit repository context and the Docker image and creates a checksummed Linux archive under `release/`. Building requires internet; starting the resulting archive does not. UI types derive from FastAPI OpenAPI (`npm run types`, service on port 8765).
 
 API documentation is at `/docs`, OpenAPI at `/openapi.json`. CLI examples:
 

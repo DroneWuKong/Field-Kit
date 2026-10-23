@@ -50,14 +50,14 @@ def revise_manifest(original):
                     name = strings[name_index]
                     if name == 'versionCode':
                         assert b[at+15] == 0x10 and struct.unpack_from('<I', b, at+16)[0] == 3
-                        struct.pack_into('<I', b, at+16, 5)
+                        struct.pack_into('<I', b, at+16, 6)
                         found_code = True
                     if name == 'versionName':
                         assert b[at+15] == 3
                         index = struct.unpack_from('<I', b, at+16)[0]
                         assert strings[index] == '0.3.0'
                         location, length_bytes, encoding = positions[index]
-                        value = '0.3.2'.encode(encoding)
+                        value = '0.3.3'.encode(encoding)
                         assert len(value) == length_bytes
                         b[location:location+length_bytes] = value
                         found_name = True
@@ -88,4 +88,4 @@ with zipfile.ZipFile(source) as old, zipfile.ZipFile(out, 'w') as new:
             name='assets/'+file.relative_to(assets).as_posix()
             if name not in written:
                 new.writestr(name,file.read_bytes(),compress_type=zipfile.ZIP_DEFLATED)
-print('Prepared asset-only update with versionCode 5 / versionName 0.3.2')
+print('Prepared asset-only update with versionCode 6 / versionName 0.3.3')

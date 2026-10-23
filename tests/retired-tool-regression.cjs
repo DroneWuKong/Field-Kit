@@ -26,7 +26,7 @@ const root=path.resolve(__dirname,'../source/assets');
   assert.equal(await p.locator('#kit-favorites [data-shortcut=range]').count(),1);
   assert.equal(await p.locator('#kit-recent [data-shortcut=battery]').count(),1);
   assert.equal(await p.evaluate(()=>showTool('mafialrs')),false);
-  await p.locator('#kit-nav-tools').click();await p.locator('#tool-search').fill('mafia');
+  await p.locator('#open-tools').click();await p.locator('#tool-search').fill('mafia');
   assert.equal(await p.locator('.tool-choice:visible').count(),0);
   assert.equal(await p.locator('#empty-tools').isVisible(),true);
   await p.locator('#close-tools').click();
@@ -39,6 +39,7 @@ const root=path.resolve(__dirname,'../source/assets');
   assert.equal(await p.locator('#kit-check-notes').inputValue(),'Existing bench notes');
   assert.deepEqual(errors,[]);
   const result={tool_count:21,stale_shortcuts_filtered:true,retired_hash_returns_home:true,retired_tool_rejected:true,search_empty:true,hardware_flow_intact:true,existing_notes_preserved:true,errors};
-  fs.writeFileSync(path.resolve(__dirname,'../output/app/fieldkit-validation.json'),JSON.stringify(result,null,2));console.log(result);
+  fs.mkdirSync(path.resolve(__dirname,'../build-private/validation'),{recursive:true});
+  fs.writeFileSync(path.resolve(__dirname,'../build-private/validation/fieldkit-validation.json'),JSON.stringify(result,null,2));console.log(result);
  }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1});

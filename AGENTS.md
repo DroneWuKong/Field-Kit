@@ -37,3 +37,14 @@ mockup or assume that the Windows tester was Hangar.
   update the existing app in place. See the documented certificate fingerprint.
 - New user instructions take precedence. Do not introduce unnecessary approval
   questions for work already authorized by the user.
+
+## Consolidated planning workspace
+
+- `apps/horizon` contains Horizon with its unsquashed Git history. Work in this
+  Field Kit repository for future changes; keep the old standalone checkout.
+- `packages/contracts/exchange.js` is the browser adapter source. Service models
+  in `apps/horizon/horizon` generate shared schemas and the packaged browser copy
+  through `scripts/generate-contracts.py`. Check generated artifacts for drift.
+- Keep historical `output/` receipts intact. New test/unsigned build evidence goes
+  under ignored `build-private/`; do not label it signed or hardware-validated.
+- `docs/CONSOLIDATION.md` is the current integration scope and continuation map.

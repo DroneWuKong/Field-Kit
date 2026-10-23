@@ -60,6 +60,26 @@ class RadioProfile(Model):
     notes: str = "Proposed frequency; power and receiver threshold must be supplied. Gains are assumed."
 
 
+class Equipment(Model):
+    """Portable assumptions. Original Field Kit values remain an immutable source snapshot."""
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False, populate_by_name=True, serialize_by_alias=True)
+    schema_id: Literal["prismo.equipment.v1"] = Field(alias="schema")
+    id: str = Field(min_length=1, max_length=200)
+    revision: int = Field(ge=1, le=1000000)
+    name: str = Field(min_length=1, max_length=200)
+    serial: str = Field(default="", max_length=200)
+    origin: Literal["field-kit", "horizon"]
+    radios: list[RadioProfile] = Field(min_length=1, max_length=20)
+    margin_db: float = Field(ge=0, le=60)
+    source_profile: dict[str, Any] | None = None
+
+    @model_validator(mode="after")
+    def identifiers(self):
+        if len({r.id for r in self.radios}) != len(self.radios):
+            raise ValueError("Equipment radio identifiers must be unique")
+        return self
+
+
 def radios():
     return [
         RadioProfile(
@@ -118,6 +138,7 @@ class Project(Model):
     terrain_ids: list[str] = Field(default_factory=list)
     source: MissionSource | None = None
     altitude_datum: Datum | None = "EGM96"
+    equipment: Equipment | None = None
 
     @model_validator(mode="after")
     def unique_radios(self):

@@ -11,3 +11,6 @@ test-results/
 local.properties
 .env
 .env.*
+
+# Also ignore dependency-directory symlinks used by local development.
+node_modules

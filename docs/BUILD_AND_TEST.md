@@ -1,3 +1,43 @@
+# Current consolidated build — 23 October 2026
+
+Run the root `npm test` for model, configuration, regression and planning exchange
+checks. Current browser evidence writes to `build-private/validation/`, leaving
+historical `output/` receipts and PDF screenshots unchanged.
+
+```sh
+npm ci
+npx playwright install chromium --only-shell
+npm test
+npm run contracts:check
+npm run build:apk-assets
+npm run validate:apk
+```
+
+The last two commands prepare and verify **unsigned** 0.3.3/code 6 assets against
+the exact compiled baseline. They do not verify installation/signing. Use the
+original signing key and Android build tools described below for a signed release,
+then run `python3 tests/validate-package.py --apk <signed-apk-path>` without
+`--unsigned`. No new signed APK has been published.
+
+Horizon lives in `apps/horizon`. In that directory, `uv sync --frozen`,
+`uv run pytest -q`, `uv run ruff check horizon tests`, and
+`npm --prefix frontend ci && npm --prefix frontend run build` check the service/UI.
+Run a separate local test service on port 8766 and the frontend Playwright suite
+as described in its README. `npm run contracts:generate` at the root refreshes the
+committed browser schemas after changing service models. CI should run
+`npm run contracts:check` to catch drift.
+
+`./scripts/start-planner.sh` builds the combined Docker image from the repository
+root and starts it on loopback. If an older container already uses the default
+name, stop and rename it first; reuse the same data directory. The launcher
+refuses to silently restart an older version as if it were the new app.
+
+The following section describes the historical 0.3.2 packaging/signing workflow.
+Its APK, validation receipts and source screenshots are retained as historical
+artifacts; the current editable assets intentionally differ.
+
+---
+
 # Build and test
 
 ## JavaScript and browser checks

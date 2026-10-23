@@ -1,0 +1,874 @@
+{
+  "equipment": {
+    "$defs": {
+      "RadioProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "frequency_mhz": {
+            "maximum": 20000,
+            "minimum": 30,
+            "title": "Frequency Mhz",
+            "type": "number"
+          },
+          "direction": {
+            "enum": [
+              "uplink",
+              "downlink"
+            ],
+            "title": "Direction",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "control",
+              "video",
+              "telemetry"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "tx_dbm": {
+            "anyOf": [
+              {
+                "maximum": 70,
+                "minimum": -30,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tx Dbm"
+          },
+          "sensitivity_dbm": {
+            "anyOf": [
+              {
+                "maximum": 0,
+                "minimum": -180,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sensitivity Dbm"
+          },
+          "tx_gain_dbi": {
+            "default": 0,
+            "maximum": 60,
+            "minimum": -30,
+            "title": "Tx Gain Dbi",
+            "type": "number"
+          },
+          "rx_gain_dbi": {
+            "default": 0,
+            "maximum": 60,
+            "minimum": -30,
+            "title": "Rx Gain Dbi",
+            "type": "number"
+          },
+          "cable_loss_db": {
+            "default": 0,
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Cable Loss Db",
+            "type": "number"
+          },
+          "additional_loss_db": {
+            "default": 0,
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Additional Loss Db",
+            "type": "number"
+          },
+          "polarization": {
+            "default": "vertical",
+            "enum": [
+              "horizontal",
+              "vertical"
+            ],
+            "title": "Polarization",
+            "type": "string"
+          },
+          "provenance": {
+            "default": "assumed",
+            "enum": [
+              "assumed",
+              "manufacturer",
+              "measured"
+            ],
+            "title": "Provenance",
+            "type": "string"
+          },
+          "notes": {
+            "default": "Proposed frequency; power and receiver threshold must be supplied. Gains are assumed.",
+            "title": "Notes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "frequency_mhz",
+          "direction",
+          "role"
+        ],
+        "title": "RadioProfile",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "Portable assumptions. Original Field Kit values remain an immutable source snapshot.",
+    "properties": {
+      "schema": {
+        "const": "prismo.equipment.v1",
+        "title": "Schema",
+        "type": "string"
+      },
+      "id": {
+        "maxLength": 200,
+        "minLength": 1,
+        "title": "Id",
+        "type": "string"
+      },
+      "revision": {
+        "maximum": 1000000,
+        "minimum": 1,
+        "title": "Revision",
+        "type": "integer"
+      },
+      "name": {
+        "maxLength": 200,
+        "minLength": 1,
+        "title": "Name",
+        "type": "string"
+      },
+      "serial": {
+        "default": "",
+        "maxLength": 200,
+        "title": "Serial",
+        "type": "string"
+      },
+      "origin": {
+        "enum": [
+          "field-kit",
+          "horizon"
+        ],
+        "title": "Origin",
+        "type": "string"
+      },
+      "radios": {
+        "items": {
+          "$ref": "#/$defs/RadioProfile"
+        },
+        "maxItems": 20,
+        "minItems": 1,
+        "title": "Radios",
+        "type": "array"
+      },
+      "margin_db": {
+        "maximum": 60,
+        "minimum": 0,
+        "title": "Margin Db",
+        "type": "number"
+      },
+      "source_profile": {
+        "anyOf": [
+          {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Source Profile"
+      }
+    },
+    "required": [
+      "schema",
+      "id",
+      "revision",
+      "name",
+      "origin",
+      "radios",
+      "margin_db"
+    ],
+    "title": "Equipment",
+    "type": "object"
+  },
+  "plan": {
+    "$defs": {
+      "Equipment": {
+        "additionalProperties": false,
+        "description": "Portable assumptions. Original Field Kit values remain an immutable source snapshot.",
+        "properties": {
+          "schema": {
+            "const": "prismo.equipment.v1",
+            "title": "Schema",
+            "type": "string"
+          },
+          "id": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "revision": {
+            "maximum": 1000000,
+            "minimum": 1,
+            "title": "Revision",
+            "type": "integer"
+          },
+          "name": {
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "serial": {
+            "default": "",
+            "maxLength": 200,
+            "title": "Serial",
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "field-kit",
+              "horizon"
+            ],
+            "title": "Origin",
+            "type": "string"
+          },
+          "radios": {
+            "items": {
+              "$ref": "#/$defs/RadioProfile"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Radios",
+            "type": "array"
+          },
+          "margin_db": {
+            "maximum": 60,
+            "minimum": 0,
+            "title": "Margin Db",
+            "type": "number"
+          },
+          "source_profile": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Profile"
+          }
+        },
+        "required": [
+          "schema",
+          "id",
+          "revision",
+          "name",
+          "origin",
+          "radios",
+          "margin_db"
+        ],
+        "title": "Equipment",
+        "type": "object"
+      },
+      "Home": {
+        "additionalProperties": false,
+        "properties": {
+          "lat": {
+            "default": 42.28,
+            "maximum": 85,
+            "minimum": -85,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "default": -87.96,
+            "maximum": 180,
+            "minimum": -180,
+            "title": "Lon",
+            "type": "number"
+          },
+          "altitude_m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Altitude M"
+          },
+          "datum": {
+            "anyOf": [
+              {
+                "enum": [
+                  "EGM96",
+                  "NAVD88",
+                  "WGS84_ELLIPSOID"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "EGM96",
+            "title": "Datum"
+          }
+        },
+        "title": "Home",
+        "type": "object"
+      },
+      "Location": {
+        "additionalProperties": false,
+        "properties": {
+          "lat": {
+            "default": 42.28,
+            "maximum": 85,
+            "minimum": -85,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "default": -87.96,
+            "maximum": 180,
+            "minimum": -180,
+            "title": "Lon",
+            "type": "number"
+          }
+        },
+        "title": "Location",
+        "type": "object"
+      },
+      "MissionSource": {
+        "additionalProperties": false,
+        "properties": {
+          "format": {
+            "enum": [
+              "plan",
+              "wpl"
+            ],
+            "title": "Format",
+            "type": "string"
+          },
+          "filename": {
+            "title": "Filename",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "document": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Document"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          },
+          "readonly": {
+            "default": false,
+            "title": "Readonly",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "format",
+          "filename",
+          "text"
+        ],
+        "title": "MissionSource",
+        "type": "object"
+      },
+      "Project": {
+        "additionalProperties": false,
+        "properties": {
+          "version": {
+            "const": 1,
+            "default": 1,
+            "title": "Version",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "default": "Untitled mission",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "home": {
+            "$ref": "#/$defs/Home"
+          },
+          "station": {
+            "$ref": "#/$defs/Station"
+          },
+          "operator": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Location"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "waypoints": {
+            "items": {
+              "$ref": "#/$defs/Waypoint"
+            },
+            "maxItems": 5000,
+            "title": "Waypoints",
+            "type": "array"
+          },
+          "speed_mps": {
+            "default": 8,
+            "exclusiveMinimum": 0,
+            "maximum": 100,
+            "title": "Speed Mps",
+            "type": "number"
+          },
+          "radios": {
+            "items": {
+              "$ref": "#/$defs/RadioProfile"
+            },
+            "title": "Radios",
+            "type": "array"
+          },
+          "settings": {
+            "$ref": "#/$defs/Settings"
+          },
+          "terrain_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Terrain Ids",
+            "type": "array"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/MissionSource"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "altitude_datum": {
+            "anyOf": [
+              {
+                "enum": [
+                  "EGM96",
+                  "NAVD88",
+                  "WGS84_ELLIPSOID"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "EGM96",
+            "title": "Altitude Datum"
+          },
+          "equipment": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Equipment"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          }
+        },
+        "title": "Project",
+        "type": "object"
+      },
+      "RadioProfile": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "frequency_mhz": {
+            "maximum": 20000,
+            "minimum": 30,
+            "title": "Frequency Mhz",
+            "type": "number"
+          },
+          "direction": {
+            "enum": [
+              "uplink",
+              "downlink"
+            ],
+            "title": "Direction",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "control",
+              "video",
+              "telemetry"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "tx_dbm": {
+            "anyOf": [
+              {
+                "maximum": 70,
+                "minimum": -30,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Tx Dbm"
+          },
+          "sensitivity_dbm": {
+            "anyOf": [
+              {
+                "maximum": 0,
+                "minimum": -180,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sensitivity Dbm"
+          },
+          "tx_gain_dbi": {
+            "default": 0,
+            "maximum": 60,
+            "minimum": -30,
+            "title": "Tx Gain Dbi",
+            "type": "number"
+          },
+          "rx_gain_dbi": {
+            "default": 0,
+            "maximum": 60,
+            "minimum": -30,
+            "title": "Rx Gain Dbi",
+            "type": "number"
+          },
+          "cable_loss_db": {
+            "default": 0,
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Cable Loss Db",
+            "type": "number"
+          },
+          "additional_loss_db": {
+            "default": 0,
+            "maximum": 100,
+            "minimum": 0,
+            "title": "Additional Loss Db",
+            "type": "number"
+          },
+          "polarization": {
+            "default": "vertical",
+            "enum": [
+              "horizontal",
+              "vertical"
+            ],
+            "title": "Polarization",
+            "type": "string"
+          },
+          "provenance": {
+            "default": "assumed",
+            "enum": [
+              "assumed",
+              "manufacturer",
+              "measured"
+            ],
+            "title": "Provenance",
+            "type": "string"
+          },
+          "notes": {
+            "default": "Proposed frequency; power and receiver threshold must be supplied. Gains are assumed.",
+            "title": "Notes",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "frequency_mhz",
+          "direction",
+          "role"
+        ],
+        "title": "RadioProfile",
+        "type": "object"
+      },
+      "Settings": {
+        "additionalProperties": false,
+        "properties": {
+          "k_factor": {
+            "default": 1.3333333333333333,
+            "maximum": 3,
+            "minimum": 0.5,
+            "title": "K Factor",
+            "type": "number"
+          },
+          "fresnel_fraction": {
+            "default": 0.6,
+            "maximum": 1,
+            "minimum": 0,
+            "title": "Fresnel Fraction",
+            "type": "number"
+          },
+          "margin_db": {
+            "default": 10,
+            "maximum": 60,
+            "minimum": 0,
+            "title": "Margin Db",
+            "type": "number"
+          },
+          "route_step_m": {
+            "default": 25,
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Route Step M",
+            "type": "number"
+          },
+          "profile_step_m": {
+            "default": 10,
+            "maximum": 30,
+            "minimum": 0.5,
+            "title": "Profile Step M",
+            "type": "number"
+          },
+          "epsilon": {
+            "default": 15,
+            "exclusiveMinimum": 1,
+            "maximum": 100,
+            "title": "Epsilon",
+            "type": "number"
+          },
+          "conductivity": {
+            "default": 0.005,
+            "exclusiveMinimum": 0,
+            "maximum": 10,
+            "title": "Conductivity",
+            "type": "number"
+          },
+          "selected_control": {
+            "default": "control915",
+            "title": "Selected Control",
+            "type": "string"
+          },
+          "require_video": {
+            "default": true,
+            "title": "Require Video",
+            "type": "boolean"
+          },
+          "required_telemetry": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Required Telemetry",
+            "type": "array"
+          },
+          "min_agl_m": {
+            "default": 10,
+            "maximum": 3000,
+            "minimum": 0.5,
+            "title": "Min Agl M",
+            "type": "number"
+          },
+          "max_agl_m": {
+            "anyOf": [
+              {
+                "maximum": 3000,
+                "minimum": 0.5,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Max Agl M"
+          }
+        },
+        "title": "Settings",
+        "type": "object"
+      },
+      "Station": {
+        "additionalProperties": false,
+        "properties": {
+          "lat": {
+            "default": 42.28,
+            "maximum": 85,
+            "minimum": -85,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "default": -87.96,
+            "maximum": 180,
+            "minimum": -180,
+            "title": "Lon",
+            "type": "number"
+          },
+          "height_m": {
+            "default": 3,
+            "exclusiveMinimum": 0,
+            "maximum": 3000,
+            "title": "Height M",
+            "type": "number"
+          }
+        },
+        "title": "Station",
+        "type": "object"
+      },
+      "Waypoint": {
+        "additionalProperties": false,
+        "properties": {
+          "lat": {
+            "default": 42.28,
+            "maximum": 85,
+            "minimum": -85,
+            "title": "Lat",
+            "type": "number"
+          },
+          "lon": {
+            "default": -87.96,
+            "maximum": 180,
+            "minimum": -180,
+            "title": "Lon",
+            "type": "number"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "altitude_m": {
+            "default": 60,
+            "title": "Altitude M",
+            "type": "number"
+          },
+          "altitude_mode": {
+            "default": "home",
+            "enum": [
+              "agl",
+              "home",
+              "amsl"
+            ],
+            "title": "Altitude Mode",
+            "type": "string"
+          },
+          "command": {
+            "default": 16,
+            "title": "Command",
+            "type": "integer"
+          },
+          "params": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Params",
+            "type": "array"
+          },
+          "source_index": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Index"
+          }
+        },
+        "title": "Waypoint",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "schema": {
+        "const": "prismo.plan.v1",
+        "title": "Schema",
+        "type": "string"
+      },
+      "evidence": {
+        "const": "predicted",
+        "title": "Evidence",
+        "type": "string"
+      },
+      "project": {
+        "$ref": "#/$defs/Project"
+      }
+    },
+    "required": [
+      "schema",
+      "evidence",
+      "project"
+    ],
+    "title": "PlanExchange",
+    "type": "object"
+  }
+}

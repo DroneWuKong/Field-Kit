@@ -74,6 +74,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/exchange/equipment/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Equipment Apply */
+        post: operations["equipment_apply_api_v1_exchange_equipment_apply_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/exchange/equipment/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Equipment Export */
+        post: operations["equipment_export_api_v1_exchange_equipment_export_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/exchange/plan/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Plan Export */
+        post: operations["plan_export_api_v1_exchange_plan_export_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/exchange/plan/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Plan Import */
+        post: operations["plan_import_api_v1_exchange_plan_import_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/missions/import": {
         parameters: {
             query?: never;
@@ -507,6 +575,46 @@ export interface components {
              */
             datum: "EGM96" | "NAVD88" | "WGS84_ELLIPSOID";
         };
+        /**
+         * Equipment
+         * @description Portable assumptions. Original Field Kit values remain an immutable source snapshot.
+         */
+        Equipment: {
+            /**
+             * Schema
+             * @constant
+             */
+            schema: "prismo.equipment.v1";
+            /** Id */
+            id: string;
+            /** Revision */
+            revision: number;
+            /** Name */
+            name: string;
+            /**
+             * Serial
+             * @default
+             */
+            serial: string;
+            /**
+             * Origin
+             * @enum {string}
+             */
+            origin: "field-kit" | "horizon";
+            /** Radios */
+            radios: components["schemas"]["RadioProfile"][];
+            /** Margin Db */
+            margin_db: number;
+            /** Source Profile */
+            source_profile?: {
+                [key: string]: unknown;
+            } | null;
+        };
+        /** EquipmentApply */
+        EquipmentApply: {
+            project: components["schemas"]["Project"];
+            equipment: components["schemas"]["Equipment"];
+        };
         /** ExportRequest */
         ExportRequest: {
             project: components["schemas"]["Project"];
@@ -582,6 +690,20 @@ export interface components {
              */
             readonly: boolean;
         };
+        /** PlanExchange */
+        PlanExchange: {
+            /**
+             * Schema
+             * @constant
+             */
+            schema: "prismo.plan.v1";
+            /**
+             * Evidence
+             * @constant
+             */
+            evidence: "predicted";
+            project: components["schemas"]["Project"];
+        };
         /** ProfileRequest */
         ProfileRequest: {
             project: components["schemas"]["Project"];
@@ -628,6 +750,7 @@ export interface components {
              * @default EGM96
              */
             altitude_datum: ("EGM96" | "NAVD88" | "WGS84_ELLIPSOID") | null;
+            equipment?: components["schemas"]["Equipment"] | null;
         };
         /** RadioProfile */
         RadioProfile: {
@@ -944,6 +1067,138 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["Project"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Project"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    equipment_apply_api_v1_exchange_equipment_apply_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EquipmentApply"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Project"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    equipment_export_api_v1_exchange_equipment_export_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Project"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    plan_export_api_v1_exchange_plan_export_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Project"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanExchange"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    plan_import_api_v1_exchange_plan_import_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PlanExchange"];
             };
         };
         responses: {

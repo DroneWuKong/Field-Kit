@@ -1,0 +1,115 @@
+{
+  "legacy": {
+    "schema": "prismo.fieldkit.equipment.v1",
+    "revision": 7,
+    "id": "unit-42",
+    "name": "Field survey aircraft",
+    "serial": "AIR-0042",
+    "radio": "915 MHz control",
+    "antenna": "Dipole",
+    "vtx": "5.8 GHz",
+    "firmware": "Unverified",
+    "protocol": "MAVLINK",
+    "frequency": 915,
+    "power": 100,
+    "txGain": 2,
+    "rxGain": 2,
+    "sensitivity": -112,
+    "margin": 10,
+    "batteryMah": 5000,
+    "batteryVoltage": 22.2,
+    "averageCurrent": 20,
+    "reserve": 20
+  },
+  "plan": {
+    "schema": "prismo.plan.v1",
+    "evidence": "predicted",
+    "project": {
+      "version": 1,
+      "id": "portable-plan-fixture",
+      "name": "Survey plan",
+      "home": {
+        "lat": 42.28,
+        "lon": -87.96,
+        "altitude_m": null,
+        "datum": "EGM96"
+      },
+      "station": {
+        "lat": 42.28,
+        "lon": -87.96,
+        "height_m": 3
+      },
+      "operator": null,
+      "waypoints": [],
+      "speed_mps": 8,
+      "radios": [
+        {
+          "id": "control490",
+          "name": "IRONghost \u00b7 490 MHz",
+          "frequency_mhz": 490.0,
+          "direction": "uplink",
+          "role": "control",
+          "tx_dbm": null,
+          "sensitivity_dbm": null,
+          "tx_gain_dbi": 0,
+          "rx_gain_dbi": 0,
+          "cable_loss_db": 0,
+          "additional_loss_db": 0,
+          "polarization": "vertical",
+          "provenance": "assumed",
+          "notes": "Proposed frequency; power and receiver threshold must be supplied. Gains are assumed."
+        },
+        {
+          "id": "control915",
+          "name": "IRONghost \u00b7 915 MHz",
+          "frequency_mhz": 915.0,
+          "direction": "uplink",
+          "role": "control",
+          "tx_dbm": null,
+          "sensitivity_dbm": null,
+          "tx_gain_dbi": 0,
+          "rx_gain_dbi": 0,
+          "cable_loss_db": 0,
+          "additional_loss_db": 0,
+          "polarization": "vertical",
+          "provenance": "assumed",
+          "notes": "Proposed frequency; power and receiver threshold must be supplied. Gains are assumed."
+        },
+        {
+          "id": "video5800",
+          "name": "Video \u00b7 5.8 GHz",
+          "frequency_mhz": 5800.0,
+          "direction": "downlink",
+          "role": "video",
+          "tx_dbm": null,
+          "sensitivity_dbm": null,
+          "tx_gain_dbi": 0,
+          "rx_gain_dbi": 0,
+          "cable_loss_db": 0,
+          "additional_loss_db": 0,
+          "polarization": "vertical",
+          "provenance": "assumed",
+          "notes": "Proposed frequency; power and receiver threshold must be supplied. Gains are assumed."
+        }
+      ],
+      "settings": {
+        "k_factor": 1.3333333333333333,
+        "fresnel_fraction": 0.6,
+        "margin_db": 10,
+        "route_step_m": 25,
+        "profile_step_m": 10,
+        "epsilon": 15,
+        "conductivity": 0.005,
+        "selected_control": "control915",
+        "require_video": true,
+        "required_telemetry": [],
+        "min_agl_m": 10,
+        "max_agl_m": null
+      },
+      "terrain_ids": [],
+      "source": null,
+      "altitude_datum": "EGM96",
+      "equipment": null
+    }
+  }
+}

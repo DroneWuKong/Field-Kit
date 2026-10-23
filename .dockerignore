@@ -1,0 +1,15 @@
+**/.git
+**/.venv
+**/node_modules
+**/dist
+**/test-results
+**/playwright-report
+**/release
+**/data
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+output
+build-private
+source/*.apk
+tmp

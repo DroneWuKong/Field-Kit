@@ -133,7 +133,7 @@ if(new URLSearchParams(location.search).get('mode')==='standalone') {
     el('kit-position-copy').onclick=()=>{renderPosition();copyToolText(positionSummary,el('kit-position-copy'));};
     const healthLink=document.createElement('button');healthLink.textContent='Check position source & freshness';healthLink.onclick=()=>showTool('position-health',true);el('tool-coordinates').append(healthLink);
     for(const id of Object.values(sharedInputs).flat())el(id).addEventListener('input',()=>{if(!applying&&pget()){dirty=true;updateContext();}});
-    FieldKit.workspace={getProfile:()=>clone(pget()),getProfiles:()=>clone(profiles),isDirty:()=>dirty,resetSession:endSession,applyProfile:id=>{const p=profiles.find(p=>p.id===id);if(p)applyProfile(p);}};
+    FieldKit.workspace={importSharedProfile:input=>{let p=M.profile(input);if(profiles.some(x=>x.id===p.id))p={...p,id:uuid(),revision:1};if(profiles.length>=50)throw Error('Profile limit reached (50).');const next=[...profiles,p];localStorage.setItem('fieldkit-profiles',JSON.stringify(next));profiles=next;fillProfile(p);applyProfile(p);return clone(p);},getProfile:()=>clone(pget()),getProfiles:()=>clone(profiles),isDirty:()=>dirty,resetSession:endSession,applyProfile:id=>{const p=profiles.find(p=>p.id===id);if(p)applyProfile(p);}};
     dirty=!!pget()&&Object.entries(sharedInputs).some(([key,ids])=>ids.some(id=>Number(el(id).value)!==pget()[key]));
     renderProfiles();fillProfile(pget());updateContext();renderPosition();
     // Poll observations only. Native adapters own permissions, I/O and cancellation.

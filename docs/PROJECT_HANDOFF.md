@@ -1,3 +1,19 @@
+# Current continuation — 23 October 2026
+
+Field Kit is now the common repository. Horizon’s original two commits are
+preserved as ancestors through the unsquashed `apps/horizon` subtree merge.
+Continue development here; retain the old standalone checkout as history.
+See [Consolidation](CONSOLIDATION.md) for exchange contracts, desktop startup,
+validation and remaining native work. Current web assets target 0.3.3/code 6;
+Horizon is 0.2.0. The signed 0.3.2 APK and historical receipts below are unchanged.
+
+Navigation is Plan / Set up / Check / Records. Equipment and portable plan exchange
+work without migrating legacy localStorage. New planning records use their own
+key. Physical configuration writes remain disabled. The native module/signing
+boundary in the historical handoff still applies.
+
+---
+
 # Project handoff — 1 October 2026
 
 ## User intent and decisions

@@ -141,3 +141,8 @@ input[type=checkbox] { accent-color: #e9cd91; }
 @media (max-width: 1300px) { .map-view-actions>span { display: none; } .map-context { display: none; } .band-switch { top: 78px; } .brand { min-width: 190px; } .sidebar { width: 265px; } .inspector { width: 250px; } }
 @media (max-width: 1000px) { .topbar { height: auto; padding: 14px; } .sidebar { width: 270px; } .inspector { width: 100%; } .main-pane { width: calc(100% - 270px); } .map-focus .main-pane { width: 100%; } .project-switch { max-width: 290px; } }
 @media (max-width: 650px) { .topbar { gap: 14px; } .sidebar { width: 100%; height: 420px; } .main-pane { width: 100%; } .top-actions { justify-content: stretch; gap: 7px; } .top-actions button { flex: 1; padding-inline: 8px; } .project-switch { min-width: 130px; } .map-top { left: 12px; top: 14px; } .map-view-actions { top: 14px; right: 12px; } .band-switch { left: 12px; top: 72px; } .elevation-legend { left: 12px; width: 185px; } .map-legend { left: 12px; gap: 8px; font-size: 8px; } .route-profile { height: 220px; padding-inline: 12px; } .route-chart { height: 150px; } .inspector { padding: 24px 20px; } .pin-altitude { display: none; } .map-focus .main-pane { height: 85dvh; min-height: 650px; } }
+
+.exchange-card { padding: 16px; margin: 12px 0; border: 1px solid var(--border); border-radius: 12px; background: #ffffff05; }
+.exchange-card h2 { font-size: 16px; margin: 8px 0; }
+
+.brand strong a{display:block;margin-top:4px;color:#99b1bf;font-size:9px;letter-spacing:1.5px;text-decoration:none}.brand strong a:hover{color:#eed1a0}

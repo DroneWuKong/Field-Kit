@@ -1,8 +1,8 @@
 FROM node:22-bookworm-slim AS ui
 WORKDIR /src/frontend
-COPY frontend/package.json frontend/package-lock.json ./
+COPY apps/horizon/frontend/package.json apps/horizon/frontend/package-lock.json ./
 RUN npm ci
-COPY frontend/ ./
+COPY apps/horizon/frontend/ ./
 RUN npm run build
 
 FROM python:3.12-slim-bookworm AS runtime
@@ -11,16 +11,18 @@ ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PROJ_NETWORK=OFF \
     OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends libexpat1 && rm -rf /var/lib/apt/lists/*
-COPY requirements.lock ./
+COPY apps/horizon/requirements.lock ./
 RUN pip install --no-cache-dir --require-hashes -r requirements.lock
-COPY pyproject.toml ./
-COPY horizon ./horizon
+COPY apps/horizon/pyproject.toml ./
+COPY apps/horizon/horizon ./horizon
 RUN pip install --no-cache-dir --no-deps .
 RUN python -c "import rasterio, pyproj; import horizon.engine"
-COPY scripts/fetch_grids.py scripts/grids.json ./scripts/
+COPY apps/horizon/scripts/fetch_grids.py apps/horizon/scripts/grids.json ./scripts/
 RUN python scripts/fetch_grids.py /app/grids
 COPY --from=ui /src/frontend/dist ./frontend/dist
-COPY README.md docs ./docs/
+COPY apps/horizon/README.md apps/horizon/docs ./docs/
+COPY source/assets /app/fieldkit
+ENV HORIZON_FIELDKIT_ASSETS=/app/fieldkit
 ARG HORIZON_REVISION=unrecorded
 LABEL org.opencontainers.image.revision=$HORIZON_REVISION
 EXPOSE 8765

@@ -49,3 +49,14 @@
 #tool-configuration-deploy h2{font-size:20px;margin-top:28px}#tool-configuration-deploy>label{display:block;margin:16px 0 6px}#tool-configuration-deploy select{width:100%;min-height:48px}#tool-configuration-deploy pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}#tool-configuration-deploy li{overflow-wrap:anywhere;line-height:1.6}#tool-configuration-deploy small{display:block;color:var(--text-muted);font-size:12px}.kit-deploy-banner{padding:16px;border:1px solid #71669d;background:#28283f;border-radius:14px}.kit-deploy-banner p{font-size:13px;line-height:1.6;margin-bottom:0}#kit-deploy-text{font-size:14px;box-sizing:border-box}#kit-deploy-preview,#kit-deploy-run{min-height:48px}#tool-configuration-deploy button:disabled{opacity:.45}#kit-deploy-targets .kit-check-row span{overflow-wrap:anywhere}
 #kit-deploy-file{width:100%;max-width:100%;min-width:0;box-sizing:border-box}#tool-configuration-deploy .input-grid>div{min-width:0}
 #tool-configuration-deploy [hidden]{display:none!important}.kit-deploy-steps{display:flex;gap:8px;position:sticky;top:68px;z-index:1050;background:var(--bg-primary,#0b151e);padding:10px 0}.kit-deploy-steps button{flex:1;min-width:0;min-height:48px;padding:8px!important}.kit-deploy-steps [aria-current=step]{border-color:var(--accent,#88dfcc);color:var(--accent,#88dfcc)}#tool-configuration-deploy section>label{display:block;margin:16px 0 6px}#kit-deploy-to-run,#kit-deploy-to-targets{margin-top:20px;min-height:48px}
+
+/* Shared planning and records workspace */
+.fieldkit .kit-planning-dialog{width:min(640px,calc(100vw - 24px));max-width:640px;max-height:calc(100dvh - 32px);overflow:auto;border:1px solid #365363;border-radius:20px;padding:20px;background:#101f2b;color:#e3edf0;box-sizing:border-box}
+.fieldkit .kit-planning-dialog::backdrop{background:#040c14bb;backdrop-filter:blur(5px)}
+.fieldkit .kit-plan-card{padding:16px;margin:16px 0;border:1px solid #304653;border-radius:14px;background:#172b38;overflow-wrap:anywhere}
+.fieldkit .kit-plan-card h3{font-size:17px;margin:0 0 10px}.fieldkit .kit-plan-card p{font-size:13px;line-height:1.65;color:#c0d0d7}
+.fieldkit .kit-plan-card input[type=file]{display:block;width:100%;max-width:100%;margin:12px 0;font-size:12px}
+.fieldkit .kit-plan-card pre{white-space:pre-wrap;font-size:12px;overflow-wrap:anywhere}
+.fieldkit .kit-planning-dialog code{white-space:normal;overflow-wrap:anywhere}.fieldkit #kit-plan-status{font-size:13px;line-height:1.6}
+.fieldkit .kit-planning-dialog .input-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.fieldkit .kit-planning-dialog .input-group{min-width:0}
+@media(max-width:400px){.fieldkit .kit-planning-dialog{padding:14px}.fieldkit .kit-planning-dialog .input-grid{grid-template-columns:1fr}}

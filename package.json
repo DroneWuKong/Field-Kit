@@ -1,18 +1,22 @@
 {
   "name": "prismo-field-kit",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": true,
-  "description": "Prismo Field Kit Android recovered assets, production configuration practice and project handoff",
+  "description": "Prismo Field Kit with Horizon desktop planning and shared equipment contracts",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
-    "test": "npm run test:model && npm run test:ui && npm run test:regression",
+    "test": "npm run test:model && npm run test:ui && npm run test:regression && npm run test:exchange",
     "test:model": "node --test tests/configuration-model.cjs",
     "test:ui": "node tests/configuration-ui.cjs",
     "test:regression": "node tests/retired-tool-regression.cjs",
-    "validate:apk": "python3 tests/validate-package.py",
-    "capture:docs": "node tmp/pdfs/capture.cjs"
+    "validate:apk": "python3 tests/validate-package.py --apk build-private/fieldkit-unsigned.apk --unsigned",
+    "capture:docs": "node tmp/pdfs/capture.cjs",
+    "test:exchange": "node tests/exchange.cjs && node tests/planning-ui.cjs",
+    "contracts:generate": "uv run --project apps/horizon python scripts/generate-contracts.py",
+    "contracts:check": "uv run --project apps/horizon python scripts/generate-contracts.py --check",
+    "build:apk-assets": "python3 tmp/repackage_fieldkit.py"
   },
   "devDependencies": {
     "playwright": "1.56.1"

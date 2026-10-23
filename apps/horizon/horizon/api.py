@@ -13,6 +13,7 @@ from pydantic import Field
 from . import __version__
 from .catalog import search
 from .engine import Engine
+from .exchange import EquipmentApply, PlanExchange, apply_equipment, export_equipment, import_plan
 from .jobs import Jobs
 from .maps import display_range, tile
 from .missions import export_mission, import_mission
@@ -109,6 +110,25 @@ def create_app(root=None, frontend=None):
             raise ValueError("Project identifier mismatch")
         store.put("project", ident, project.model_dump())
         return project
+
+    @app.post("/api/v1/exchange/equipment/apply", response_model=Project)
+    def equipment_apply(body: EquipmentApply):
+        # Preview only; the UI commits through its normal undoable project editor.
+        return apply_equipment(body.project, body.equipment)
+
+    @app.post("/api/v1/exchange/equipment/export")
+    def equipment_export(project: Project):
+        return export_equipment(project).model_dump()
+
+    @app.post("/api/v1/exchange/plan/export", response_model=PlanExchange)
+    def plan_export(project: Project):
+        return PlanExchange(schema="prismo.plan.v1", evidence="predicted", project=project)
+
+    @app.post("/api/v1/exchange/plan/import", response_model=Project)
+    def plan_import(plan: PlanExchange):
+        p = import_plan(plan)
+        store.put("project", p.id, p.model_dump())
+        return p
 
     @app.post("/api/v1/missions/import", response_model=Project)
     async def mission_import(file: UploadFile = File()):
@@ -281,6 +301,9 @@ def create_app(root=None, frontend=None):
     def schema():
         return Project.model_json_schema()
 
+    fieldkit = Path(os.environ.get("HORIZON_FIELDKIT_ASSETS", str(Path(__file__).resolve().parents[3] / "source/assets")))
+    if fieldkit.is_dir():
+        app.mount("/field-kit", StaticFiles(directory=fieldkit, html=True), name="field-kit")
     assets = Path(frontend or os.environ.get("HORIZON_FRONTEND", "frontend/dist"))
     if assets.is_dir():
         app.mount("/", StaticFiles(directory=assets, html=True), name="frontend")
