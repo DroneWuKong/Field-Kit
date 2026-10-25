@@ -1,5 +1,19 @@
 # Windows desktop package
 
+## Version available now
+
+The published ZIP and current `main` build scripts target **Horizon 0.2.0**.
+They do not contain the automatic startup-location/map changes, bundled world
+map, regional offline-map preparation or reusable setup library developed for
+0.3.0. That unpublished checkout was removed by workspace maintenance. Recovery
+and a new build on Windows are required; no native 0.3.0 package is available yet.
+See [release/source status](RELEASE_STATUS.md).
+
+The [Android 0.5.0 guide](ANDROID.md) covers the delivered phone planner. JSON
+plans and equipment can move between the phone and desktop, but basemap and
+terrain files are separate. The published 0.2.0 ZIP does not offer the planned
+**Save map for Android** action.
+
 The Windows x64 package runs Horizon and Field Kit together as a local browser
 workspace. It includes Python, the terrain libraries, both interfaces and the
 three checksum-pinned starter datum grids. Docker, Node and a separate Python

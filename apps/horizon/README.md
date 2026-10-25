@@ -1,5 +1,12 @@
 # Horizon — offline radio mission planner
 
+**Version scope:** this checkout and the published Windows ZIP are 0.2.0.
+The later 0.3.0 startup/offline-area/setup work was not published and requires
+source recovery before a new native build. See the parent
+[release/source status](../../docs/RELEASE_STATUS.md). The delivered
+[Android 0.5.0 planner](../../docs/ANDROID.md) exchanges route/equipment files with
+Horizon; it does not include this Python terrain engine.
+
 A local browser app for drawing aerial waypoint missions and predicting terrain clearance and radio-link margins at 490, 915 and 5800 MHz. Linux x86-64 and a portable Windows x64 executable are packaged. See the parent repository’s `docs/WINDOWS.md` for Windows startup and qualification. The analysis engine and versioned HTTP API are independent of the UI and serve the Prismo Field Kit planning workspace.
 
 ## Start the packaged app

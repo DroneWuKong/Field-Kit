@@ -1,4 +1,45 @@
-# Current continuation — 23 October 2026
+# Current continuation — 24 October 2026
+
+The user requested README/docs updates after receiving the signed Android 0.5.0
+APK and asking for a direct download. The new [Android guide](ANDROID.md) covers
+that delivered build. [Release/source status](RELEASE_STATUS.md) records the
+exact artifact identity, available source versions and recovery gap.
+
+Fresh repository checks found `main` at `a2e0aeba4f353b5c43af0ef8fad0c6d76a46fa90`:
+Horizon is 0.2.0, the Android assets are 0.3.3, and the Windows workflow still
+packages 0.2.0. The native branch `codex/fieldkit-live-config` contains the older
+0.4.2/code-8 Gradle module. Do not repeat the broader historical claim that no
+native Android implementation exists anywhere in this repository.
+
+The previous session built and delivered Android 0.5.0/code 9 using the original
+signer. It added automatic device location, a bundled world overview, local
+PMTiles imports, editable/saved routes, reusable radio setups with review/undo,
+and Android document-picker JSON export. Desktop terrain analysis remained
+separate, and the configuration practice gate stayed disabled. The 0.4.2 branch's
+connected-deployment web changes were not merged into that planner build.
+
+The local commits `5317301`, `9292961` and `8ffe158` on
+`codex/desktop-startup-maps` were not pushed. Workspace maintenance subsequently
+removed that checkout; it was not a user deletion. GitHub has no such branch and
+could not resolve `8ffe158`. The signed APK is preserved, but no matching source
+archive was found. Do not claim a fresh clone contains those changes or that
+building current `main` reproduces the APK. Restore a retained source copy if one
+exists, otherwise reconstruct and revalidate the missing implementation.
+
+Prior session results recorded 80 Python and 14 desktop browser tests, Field Kit
+regressions, contract checks and a real regional offline-map preparation. Android
+compilation, original certificate, alignment, 42 packaged assets and phone browser
+scenarios at 360/393/800 px passed. These were not physical Android or emulator
+installation tests. No native Horizon 0.3.0 Windows executable was built.
+
+This documentation update is scoped to the README and Markdown guides. Keep
+historical APKs, receipts and PDFs intact. The older PDF guides are not a current
+0.5.0 planner manual. The user's docs request does not authorize silently merging
+the separate native configuration branch or relabeling old binaries as new ones.
+
+---
+
+# Previous continuation — 23 October 2026
 
 Field Kit is now the common repository. Horizon’s original two commits are
 preserved as ancestors through the unsquashed `apps/horizon` subtree merge.

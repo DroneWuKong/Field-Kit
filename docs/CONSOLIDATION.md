@@ -1,4 +1,21 @@
-# Field Kit + Horizon — 23 October 2026
+# Field Kit + Horizon
+
+## Version scope — 24 October 2026
+
+The source layout and implementation below describe `main` (Horizon 0.2.0 and
+Field Kit 0.3.3 assets). The delivered Android 0.5.0 APK adds a separate phone
+map/route/setup workspace, but its unpublished source checkout is no longer
+available after workspace maintenance. It must not be inferred from this older
+source layout. See [release/source status](RELEASE_STATUS.md) and
+[Android instructions](ANDROID.md).
+
+The delivered phone planner uses its own `fieldkit-mobile-planner-v1` localStorage
+record and `fieldkit-offline-maps-v1` IndexedDB database, while retaining the
+existing appassets origin and legacy tool records. Its exports use the existing
+Prismo contracts. This is file exchange, not shared storage or phone-side
+execution of the desktop terrain engine.
+
+## Consolidation recorded on 23 October 2026
 
 Field Kit is now the common source repository. Horizon was imported under
 `apps/horizon` with `git subtree add` **without squash**. Its original commits

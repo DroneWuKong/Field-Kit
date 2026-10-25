@@ -6,9 +6,12 @@ production-line app that reuses standard setups across drones and records
 verified results. Carry this work forward; do not restart from a generic tools
 mockup or assume that the Windows tester was Hangar.
 
-- Current native Android source is missing. The APK baseline is compiled code,
-  not source. Do not describe this repository as a full Gradle project or claim
-  configuration hardware writes work. Recover or rebuild the native module.
+- Read `docs/RELEASE_STATUS.md` before making version or source-availability claims.
+  `main` has the asset baseline; the 0.4.2 native Gradle implementation is on
+  `codex/fieldkit-live-config`. The delivered 0.5.0 APK's unpublished checkout was
+  removed by workspace maintenance and is not recoverable from a fresh clone.
+  Do not claim that older source reproduces it or that configuration hardware
+  writes work. Preserve the APK and recover/reconstruct the missing source.
 - `LIVE_CONFIG_WRITE_GATE=false` is intentional. Keep Practice clearly labeled.
   Do not enable that gate to hide a missing adapter, and do not route a physical
   device request silently to the simulator.

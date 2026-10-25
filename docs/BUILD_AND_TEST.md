@@ -1,137 +1,149 @@
-# Current consolidated build — 23 October 2026
+# Build and test
 
-For the native Windows executable, use [the Windows build and qualification
-guide](WINDOWS.md). Windows evidence is produced by an actual Windows runner;
-Linux tests are not substituted for native executable checks.
+These commands apply to the source currently on `main`: **Horizon 0.2.0** and
+**Field Kit 0.3.3 web assets**. They do not reproduce the delivered Android 0.5.0
+APK or the unpublished Horizon 0.3.0 work. Read [release/source status](RELEASE_STATUS.md)
+and [Android usage](ANDROID.md) before choosing a build path.
 
-Run the root `npm test` for model, configuration, regression and planning exchange
-checks. Current browser evidence writes to `build-private/validation/`, leaving
-historical `output/` receipts and PDF screenshots unchanged.
+## Check the current Field Kit assets
+
+Use Node 22+, Python 3 and the pinned Playwright dependency:
 
 ```sh
 npm ci
 npx playwright install chromium --only-shell
 npm test
 npm run contracts:check
+```
+
+Contract generation/checking also requires `uv` and the Horizon Python environment.
+On Linux, install Chromium system dependencies when necessary with
+`npx playwright install --with-deps chromium`.
+
+The root suite covers configuration models, browser workflows, the removed-tool
+regression, equipment/plan exchange and phone layouts at 360, 393 and 800 px.
+The browser harness uses the Android-like HTTPS asset origin and blocks external
+network requests. It does not open real USB devices or validate physical drones.
+Current evidence goes under ignored `build-private/validation/`; do not overwrite
+historical `output/` receipts or PDF screenshots.
+
+The explicit configuration boundary is in
+[`source/assets/tools/fieldkit-deployment.js`](../source/assets/tools/fieldkit-deployment.js):
+
+- `LIVE_CONFIG_WRITE_GATE=false` identifies the physical-write gate.
+- `PracticeAdapter` provides the supported hardware-free execution path.
+- `NativeAdapter` rejects physical configuration access, and the runner accepts
+  `mode=simulation` only on `main`.
+
+Tests can exercise the full practice sequence without hardware. Changing the
+constant alone does not supply a native adapter. See the
+[adapter contract](../output/configuration/Native-configuration-adapter-contract.txt)
+for required target identity, complete reads, backups, persistence and readback.
+
+## Check Horizon source
+
+From `apps/horizon`:
+
+```sh
+uv sync --frozen
+uv run pytest -q
+uv run ruff check horizon tests
+npm --prefix frontend ci
+npm --prefix frontend run build
+```
+
+Start a separate test service, then run the browser suite in another terminal:
+
+```sh
+uv run horizon --data /tmp/horizon-browser-data serve --port 8766
+```
+
+```sh
+cd frontend
+npx playwright install chromium
+npx playwright test
+```
+
+Use `npm run contracts:generate` at the repository root after intentional service
+schema changes, and `npm run contracts:check` to detect drift. Generated browser
+contracts must match `packages/contracts/exchange.js` and the service models.
+
+`./scripts/start-planner.sh` builds the combined Docker image and starts the local
+workspace. The first build needs internet. Reuse the existing data directory;
+an older running container must not be reported as a newer source build.
+
+## Build the published Windows version
+
+Use [the Windows guide](WINDOWS.md) and `scripts/build-windows.ps1` on Windows x64.
+The current manual workflow and packaging script target **0.2.0**. Linux service
+or browser tests do not qualify a native Windows executable. Restoring the 0.3.0
+source and packaging changes is required before a 0.3.0 Windows build can run.
+
+## Android asset update available on main
+
+The current asset repackager targets **0.3.3 / versionCode 6** against the exact
+compiled 0.3.0 baseline. This is the legacy asset-update path, not a full native
+0.5.0 build:
+
+```sh
 npm run build:apk-assets
 npm run validate:apk
 ```
 
-The last two commands prepare and verify **unsigned** 0.3.3/code 6 assets against
-the exact compiled baseline. They do not verify installation/signing. Use the
-original signing key and Android build tools described below for a signed release,
-then run `python3 tests/validate-package.py --apk <signed-apk-path>` without
-`--unsigned`. No new signed APK has been published.
+The resulting `build-private/fieldkit-unsigned.apk` is unsigned. The validator
+checks its manifest, asset contents and preserved non-asset entries; it does not
+prove installation or hardware behavior.
 
-Horizon lives in `apps/horizon`. In that directory, `uv sync --frozen`,
-`uv run pytest -q`, `uv run ruff check horizon tests`, and
-`npm --prefix frontend ci && npm --prefix frontend run build` check the service/UI.
-Run a separate local test service on port 8766 and the frontend Playwright suite
-as described in its README. `npm run contracts:generate` at the root refreshes the
-committed browser schemas after changing service models. CI should run
-`npm run contracts:check` to catch drift.
-
-`./scripts/start-planner.sh` builds the combined Docker image from the repository
-root and starts it on loopback. If an older container already uses the default
-name, stop and rename it first; reuse the same data directory. The launcher
-refuses to silently restart an older version as if it were the new app.
-
-The following section describes the historical 0.3.2 packaging/signing workflow.
-Its APK, validation receipts and source screenshots are retained as historical
-artifacts; the current editable assets intentionally differ.
-
----
-
-# Build and test
-
-## JavaScript and browser checks
-
-Use Node 22+ and Python 3. The pinned browser dependency is Playwright 1.56.1.
+To sign that legacy output, provide Android Build Tools 35.0.0 and the original
+trusted development key locally. For example, using a private key path:
 
 ```sh
-npm ci
-npx playwright install chromium
-npm test
-npm run validate:apk
-```
-
-On a fresh Linux host, install Chromium system dependencies when needed with
-`npx playwright install --with-deps chromium`. The browser tests route the
-appassets HTTPS origin to local files and block external network requests.
-They never open USB/network devices. They create sample outputs under
-`output/configuration/` and `output/app/fieldkit-validation.json`.
-
-Model checks require no npm dependencies:
-
-```sh
-node --test tests/configuration-model.cjs
-```
-
-A plain `file://` or HTTP preview is not equivalent to the Android appassets
-origin. Clipboard, crypto and navigation assumptions should be checked using
-the provided browser harness or a deliberate secure local preview.
-
-## Available Android packaging path
-
-There is no recoverable native Gradle module in this repository. The provided
-packager is an asset-only update to the exact compiled 0.3.0 baseline. It verifies
-the baseline hash, replaces/adds assets, omits the retired Forge catalog, updates
-manifest version 3/0.3.0 to 5/0.3.2, and preserves native code/resources.
-
-Requirements: Python 3, Java, Android SDK Build Tools 35.0.0 (`zipalign`,
-`apksigner` or its JAR), and the original trusted development signing keystore.
-No SDK tools or private key are committed. Supply their paths locally.
-
-```sh
-python3 tmp/repackage_fieldkit.py
 zipalign -f -p 4 build-private/fieldkit-unsigned.apk build-private/fieldkit-aligned.apk
-apksigner sign --ks /secure/path/development.keystore --ks-key-alias androiddebugkey --out output/app/Prismo-Field-Kit-0.3.2-debug.apk build-private/fieldkit-aligned.apk
-apksigner verify --verbose --print-certs output/app/Prismo-Field-Kit-0.3.2-debug.apk
-zipalign -c -p 4 output/app/Prismo-Field-Kit-0.3.2-debug.apk
-python3 tests/validate-package.py
+apksigner sign --ks /secure/path/development.keystore --ks-key-alias androiddebugkey --out build-private/Prismo-Field-Kit-0.3.3-debug.apk build-private/fieldkit-aligned.apk
+apksigner verify --verbose --print-certs build-private/Prismo-Field-Kit-0.3.3-debug.apk
+zipalign -c -p 4 build-private/Prismo-Field-Kit-0.3.3-debug.apk
+python3 tests/validate-package.py --apk build-private/Prismo-Field-Kit-0.3.3-debug.apk
 ```
 
-Allow the signer to prompt for passwords or use a local secret mechanism. Do not
-put private credentials in command history, source files or this repository.
-The prior development key was saved separately outside the repository as
-`TAK-Bridge-development-signing.keystore` (a prior Work file artifact). Recover
-that file through the owner’s existing secure storage if it is needed. A new
-key changes the signer and cannot update the installed app in place.
+Let the signer prompt for passwords or use a local secret mechanism. Never put
+private credentials in history, documentation, source or the repository. A newly
+generated debug key cannot update an installed app signed by the original key.
+Do not try to replace an installed code-9 build with this older code-6 package.
 
-Trusted development certificate SHA-256:
+## Android 0.5.0: verification versus rebuild
 
+The exact 0.5.0 source checkout was removed before publication. The older native
+Gradle implementation remains on
+[`codex/fieldkit-live-config`](https://github.com/DroneWuKong/Field-Kit/tree/codex/fieldkit-live-config),
+where `app/build.gradle.kts` declares **0.4.2 / code 8**. It is useful recovery
+material, not an exact 0.5.0 source tree. `main` does not contain the 0.5.0 mobile
+frontend, source staging script or native APK validator.
+
+The recorded 0.5.0 build used JDK 17 including `jlink`, Gradle 8.9, Android Gradle
+Plugin 8.7.3, SDK platform 35 and Build Tools 35.0.0, with Node 22+ and Python 3.
+Restore the matching source and tests before presenting new build commands as a
+reproducible 0.5.0 release process.
+
+The delivered binary can still be inspected with Android Build Tools:
+
+```sh
+apksigner verify --verbose --print-certs Prismo-Field-Kit-0.5.0.apk
+zipalign -c -p 4 Prismo-Field-Kit-0.5.0.apk
+aapt dump badging Prismo-Field-Kit-0.5.0.apk
 ```
-2e127ebcae2cfa8e81e529327b98ea2758050120ce692001136413f0437413c9
-```
 
-The certificate fingerprint is public identity metadata, not the private key.
-Recover/use the trusted keystore for continuity. Do not present a differently
-signed build as the same installable update.
+Expected package: `com.dronewukong.fieldtools`; version `0.5.0`; code `9`; minimum
+SDK `26`; target SDK `35`. Compare its SHA-256 and certificate with
+[the artifact identity](RELEASE_STATUS.md#android-050-artifact).
+A matching signature and hash verify identity, not on-device functionality.
 
-`aapt dump badging` should show `com.dronewukong.fieldtools`, versionCode 5,
-versionName 0.3.2, minSdk 26 and targetSdk 35. For a later version, revise the
-packager's explicit version fields, validator and filenames together. Do not
-patch native DEX to manufacture missing USB/MAVLink features.
+## Documentation and historical evidence
 
-## Documentation assets
+`tmp/pdfs/` and `output/pdf/` retain the earlier guide sources, screenshots and
+PDFs. Their 0.3.1 workflow is historical. The new Android planner instructions are
+in [ANDROID.md](ANDROID.md); the old PDFs have not been regenerated or relabeled.
 
-`tmp/pdfs/make_guides.py`, `human_copy.py`, `manifest.json`, `screens/` and
-`sample-report.html` preserve the reviewed 0.3.1 guide sources. PDFs are under
-`output/pdf/`. They contain 6 and 31 pages respectively and describe 20 tools.
-
-The authoring script uses ReportLab 4.4.9 and DejaVu fonts under the usual Linux
-font path. Install `requirements-docs.txt` when regenerating intentionally.
-The screenshot capture script targets current assets; it would generate a
-21-tool catalog. The guide generator intentionally checks its archived
-20-tool manifest. Do not overwrite the archived source manifest as a casual test.
-
-Before producing an updated guide, update copy/screenshot mapping/version
-claims, follow the available PDF workflow, render every page and inspect layout,
-arrows and labels. Merely copying the existing PDFs does not regenerate them.
-
-## Migration validation
-
-The migration changes browser test imports to normal `require('playwright')`,
-provides a pinned root npm package/lockfile, and creates the packager's output
-directory when needed. Runtime assets remain byte-identical to the delivered
-0.3.2 APK. APK validation must continue to prove this.
+Before regenerating PDFs, update the copy and screenshot mapping, follow the PDF
+workflow, render every page, and inspect layout and callouts. Preserve the old
+versioned artifacts. `output/app/` and `output/configuration/` also remain historical
+records, not evidence for features added later.
