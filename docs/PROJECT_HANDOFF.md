@@ -1,4 +1,15 @@
-# Current continuation — 24 October 2026
+# Current continuation — 25 October 2026
+
+The user requested a generated APK and GitHub publication. The available native
+shell and current main assets now build as **0.3.3-preview.1**, documented in
+[Android Preview](ANDROID_PREVIEW.md). This is a separate application because the
+original signing key was not available here. Native configuration writes reject;
+the main web Practice workflows remain intact. The 0.5.0 map planner has not been
+recovered. Preserve its historical identity and evidence below.
+
+---
+
+# Previous continuation — 24 October 2026
 
 The user requested README/docs updates after receiving the signed Android 0.5.0
 APK and asking for a direct download. The new [Android guide](ANDROID.md) covers

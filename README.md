@@ -8,10 +8,14 @@ analysis on your computer.
 
 | App | Download | Status |
 | --- | --- | --- |
+| Android Preview 0.3.3-preview.1 | [Download APK](https://github.com/DroneWuKong/Field-Kit/releases/download/android-v0.3.3-preview.1/Prismo-Field-Kit-0.3.3-preview.1.apk) · [preview guide](docs/ANDROID_PREVIEW.md) | Rebuilt current assets; separate installation and development signer; Android 8.0+ |
 | Android 0.5.0 | APK supplied directly to the owner · 4.4 MB; [installation guide](docs/ANDROID.md) | Signed development build; Android 8.0+; no public download yet |
 | Windows x64 · Horizon 0.2.0 | [Download ZIP · about 80 MiB](https://github.com/DroneWuKong/Field-Kit/releases/download/horizon-v0.2.0-windows/Prismo-Field-Kit-Horizon-0.2.0-windows-x64.zip) | Published portable preview; executable is unsigned |
 
-The Android APK has not been published as a public GitHub release.
+The preview is a new build of the available 0.3.3 assets, with tools, Practice,
+records and desktop plan exchange. It installs as **Field Kit Preview** beside
+the original app. It does not include the missing 0.5.0 mobile map planner.
+The original 0.5.0 APK has not been published as a public GitHub release.
 [Release and source status](docs/RELEASE_STATUS.md) distinguishes the
 available downloads from the code currently on `main`. The Android 0.5.0 and
 Horizon 0.3.0 source changes are not present on GitHub; the unpublished checkout

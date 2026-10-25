@@ -1,5 +1,11 @@
 # Build and test
 
+The native Android rebuild is documented in [Android Preview](ANDROID_PREVIEW.md).
+Run `./gradlew :app:assembleRelease :app:lintRelease` with JDK 17 and Android SDK 35.
+The preview uses current 0.3.3 assets and a separate application ID/signing identity.
+It does not reproduce 0.5.0. Use `tests/validate-native-package.py` for this build;
+the legacy asset repackager and validator below remain available separately.
+
 These commands apply to the source currently on `main`: **Horizon 0.2.0** and
 **Field Kit 0.3.3 web assets**. They do not reproduce the delivered Android 0.5.0
 APK or the unpublished Horizon 0.3.0 work. Read [release/source status](RELEASE_STATUS.md)

@@ -14,3 +14,8 @@ local.properties
 
 # Also ignore dependency-directory symlinks used by local development.
 node_modules
+
+# Native Android build products and local signing configuration.
+.gradle/
+app/build/
+build/

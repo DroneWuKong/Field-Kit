@@ -7,6 +7,9 @@ verified results. Carry this work forward; do not restart from a generic tools
 mockup or assume that the Windows tester was Hangar.
 
 - Read `docs/RELEASE_STATUS.md` before making version or source-availability claims.
+  `docs/ANDROID_PREVIEW.md` describes the native 0.3.3 preview rebuild now on this
+  branch: separate package/signing identity, current main assets, and native writes
+  disabled. Keep its version and feature claims distinct from the missing 0.5.0.
   `main` has the asset baseline; the 0.4.2 native Gradle implementation is on
   `codex/fieldkit-live-config`. The delivered 0.5.0 APK's unpublished checkout was
   removed by workspace maintenance and is not recoverable from a fresh clone.

@@ -1,5 +1,16 @@
 # Release and source status
 
+## 25 October 2026: reproducible Android preview
+
+[Field Kit Preview 0.3.3-preview.1](ANDROID_PREVIEW.md) builds the available 0.3.3
+assets using the recovered native shell. Its separate package ID is
+`com.dronewukong.fieldtools.preview`, version code 6, signed with the preview
+development certificate documented in that guide. It installs beside the original
+Field Kit and does not migrate its private data. The missing 0.5.0 planner source
+and original signing key were unavailable on GupB. This preview does not recover
+that implementation or supersede its feature set. The records below describe
+the earlier deliveries and source recovery gap.
+
 Checked **24 October 2026**. A delivered binary, a source branch, a passing browser
 test and a published native package are different records.
 
