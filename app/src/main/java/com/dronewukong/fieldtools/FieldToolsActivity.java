@@ -44,7 +44,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public final class FieldToolsActivity extends Activity {
-    private static final String URL = "https://appassets.androidplatform.net/assets/tools/tools_offline.html?mode=standalone#home";
+    private static final String URL = "https://appassets.androidplatform.net/assets/mobile/index.html";
     private static final int PICK_FILE = 42, SAVE_FILE = 43;
     private WebView web;
     private ConfigLink link;
@@ -76,11 +76,17 @@ public final class FieldToolsActivity extends Activity {
         web.addJavascriptInterface(new Bridge(), "Android");
         web.setWebViewClient(new WebViewClient() {
             @Override public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                return loader.shouldInterceptRequest(request.getUrl());
+                WebResourceResponse response = loader.shouldInterceptRequest(request.getUrl());
+                // Android's MIME database does not consistently recognize ES modules.
+                if (response != null && request.getUrl().getPath() != null
+                    && request.getUrl().getPath().endsWith(".mjs")) response.setMimeType("application/javascript");
+                return response;
             }
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri uri = request.getUrl();
-                if (uri.toString().startsWith(URL.split("\\?")[0])) return false;
+                if ("https".equals(uri.getScheme()) && "appassets.androidplatform.net".equals(uri.getHost())
+                    && ("/assets/mobile/index.html".equals(uri.getPath())
+                    || "/assets/tools/tools_offline.html".equals(uri.getPath()))) return false;
                 if (request.isForMainFrame() && ("https".equals(uri.getScheme()) || "http".equals(uri.getScheme())))
                     try { startActivity(new Intent(Intent.ACTION_VIEW, uri)); } catch (Exception ignored) { }
                 return true;
@@ -140,7 +146,10 @@ public final class FieldToolsActivity extends Activity {
 
     @Override public void onBackPressed() {
         web.evaluateJavascript("Boolean(window.fieldKitBack && window.fieldKitBack())", value -> {
-            if (!"true".equals(value)) FieldToolsActivity.super.onBackPressed();
+            if (!"true".equals(value)) {
+                if (web.canGoBack()) web.goBack();
+                else FieldToolsActivity.super.onBackPressed();
+            }
         });
     }
 
@@ -152,7 +161,8 @@ public final class FieldToolsActivity extends Activity {
     }
 
     private Location bestLastLocation() {
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             return null;
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         Location gps = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -257,13 +267,14 @@ public final class FieldToolsActivity extends Activity {
         }
         @JavascriptInterface public void saveReport(String name, String html) { saveText(name, "text/html", html); }
         @JavascriptInterface public void saveText(String name, String mime, String text) {
-            if (name == null || !name.matches("[A-Za-z0-9_.-]{1,100}") || text == null || text.length() > 2000000) return;
-            if (!"text/plain".equals(mime) && !"text/html".equals(mime)) return;
+            if (name == null || !name.matches("[A-Za-z0-9_.-]{1,100}") || text == null || text.getBytes(StandardCharsets.UTF_8).length > 5000000) return;
+            if (!"text/plain".equals(mime) && !"text/html".equals(mime) && !"application/json".equals(mime)) return;
             runOnUiThread(() -> save(name, mime, text));
         }
         @JavascriptInterface public String getCurrentPhoneLocation() {
             try {
-                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                     return "{\"error\":\"location_permission_not_granted\"}";
                 if ("pending".equals(phoneLocationState)) return "{\"error\":\"pending\"}";
                 if ("not_requested".equals(phoneLocationState)) return "{\"error\":\"not_requested\"}";
@@ -273,13 +284,15 @@ public final class FieldToolsActivity extends Activity {
         }
         @JavascriptInterface public String getGpsLocation() {
             try {
-                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+                if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                     return "{\"error\":\"location_permission_not_granted\"}";
                 return locationJson(bestLastLocation(), true);
             } catch (Exception e) { return "{\"error\":\"location_unavailable\"}"; }
         }
         @JavascriptInterface public String requestFreshPhoneLocation() {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
                 return "{\"error\":\"location_permission_not_granted\"}";
             phoneLocationState = "pending"; latestPhoneLocation = null;
             runOnUiThread(() -> {
@@ -290,7 +303,8 @@ public final class FieldToolsActivity extends Activity {
                     cancelPhoneLocationRequest();
                 };
                 try {
-                    String provider = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                    String provider = checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
                         ? LocationManager.GPS_PROVIDER : LocationManager.NETWORK_PROVIDER;
                     lm.requestSingleUpdate(provider, phoneLocationListener, Looper.getMainLooper());
                 } catch (Exception e) { phoneLocationState = "unavailable"; cancelPhoneLocationRequest(); }
@@ -298,7 +312,7 @@ public final class FieldToolsActivity extends Activity {
             return "{\"error\":\"pending\"}";
         }
         @JavascriptInterface public String requestLocationPermission() {
-            runOnUiThread(() -> requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 99));
+            runOnUiThread(() -> requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 99));
             return "requested";
         }
         @JavascriptInterface public String getDiagnosticPorts() { return link.list(); }

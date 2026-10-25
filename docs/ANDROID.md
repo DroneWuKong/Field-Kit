@@ -1,5 +1,8 @@
 # Field Kit Android 0.5.0
 
+This is the historical 0.5.0 guide. For the current reconstructed build, use
+[Field Kit Planner 0.5.1](ANDROID_PLANNER.md), including its separate install identity.
+
 `Prismo-Field-Kit-0.5.0.apk` (4.4 MB) is the signed development build supplied
 directly to the project owner. There is no public GitHub download for this version
 yet; use the APK attachment supplied with the build. It supports Android 8.0/API 26

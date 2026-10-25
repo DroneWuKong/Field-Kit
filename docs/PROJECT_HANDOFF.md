@@ -1,4 +1,17 @@
-# Current continuation — 25 October 2026
+# Current continuation — Android Planner 0.5.1, 25 October 2026
+
+The user rejected the older preview and requested the latest planner on the site.
+The lost 0.5.0 features have been reconstructed as 0.5.1/code 10; see
+[the current planner guide](ANDROID_PLANNER.md). Source lives in
+`source/assets/mobile/` with the native shell in `app/`. Keep the separate
+`com.dronewukong.fieldtools.preview` package and signer while the original key is
+unavailable. Never relabel this as the exact recovered 0.5.0 source or binary.
+The GitHub release is `android-v0.5.1`; the existing Prismo Apps site carries its
+APK. Preserve site audience and all historical releases. Browser and build checks
+are software evidence; physical phone installation remains untested. Native and
+frontend configuration-write gates stay disabled.
+
+# Previous continuation — 25 October 2026
 
 The user requested a generated APK and GitHub publication. The available native
 shell and current main assets now build as **0.3.3-preview.1**, documented in

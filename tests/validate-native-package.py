@@ -1,4 +1,4 @@
-"""Verify the rebuilt preview independently of the historical asset repackager."""
+"""Verify the reconstructed planner independently of the historical asset repackager."""
 import argparse
 import hashlib
 import json
@@ -28,10 +28,10 @@ assert signers == [certificate], f"Unexpected signing certificate(s): {signers}"
 assert "Verified using v2 scheme (APK Signature Scheme v2): true" in signature
 tool("zipalign", "-c", "-p", "4", args.apk)
 badging = tool("aapt", "dump", "badging", args.apk)
-assert "package: name='com.dronewukong.fieldtools.preview' versionCode='6' versionName='0.3.3-preview.1'" in badging
+assert "package: name='com.dronewukong.fieldtools.preview' versionCode='10' versionName='0.5.1'" in badging
 assert "sdkVersion:'26'" in badging
 assert "targetSdkVersion:'35'" in badging
-assert "application-label:'Field Kit Preview'" in badging
+assert "application-label:'Field Kit Planner'" in badging
 assert "launchable-activity: name='com.dronewukong.fieldtools.FieldToolsActivity'" in badging
 assert "application-debuggable" not in badging
 
@@ -57,8 +57,8 @@ print(json.dumps({
     "sha256": hashlib.sha256(args.apk.read_bytes()).hexdigest(),
     "bytes": args.apk.stat().st_size,
     "package": "com.dronewukong.fieldtools.preview",
-    "version": "0.3.3-preview.1",
-    "versionCode": 6,
+    "version": "0.5.1",
+    "versionCode": 10,
     "certificate_sha256": certificate,
     "signature_verified": True,
     "alignment_verified": True,

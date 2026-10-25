@@ -7,6 +7,9 @@ verified results. Carry this work forward; do not restart from a generic tools
 mockup or assume that the Windows tester was Hangar.
 
 - Read `docs/RELEASE_STATUS.md` before making version or source-availability claims.
+  Current Android source reconstructs the latest phone planner as 0.5.1/code 10;
+  read `docs/ANDROID_PLANNER.md`. It retains the separate preview package/signer.
+  Do not confuse reconstruction with recovering the exact missing 0.5.0 commits.
   `docs/ANDROID_PREVIEW.md` describes the native 0.3.3 preview rebuild now on this
   branch: separate package/signing identity, current main assets, and native writes
   disabled. Keep its version and feature claims distinct from the missing 0.5.0.

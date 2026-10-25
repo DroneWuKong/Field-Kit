@@ -1,5 +1,18 @@
 # Release and source status
 
+## 25 October 2026: reconstructed Android Planner 0.5.1
+
+[Planner 0.5.1](ANDROID_PLANNER.md) restores the documented map, saved-route,
+equipment, PMTiles and JSON-export workflows in new source under
+`source/assets/mobile/`. Native source is in `app/`. Version code is 10 and package
+is `com.dronewukong.fieldtools.preview`, retaining the separate preview signer.
+It supersedes the older preview's feature set; it does not recover or reproduce
+the exact missing 0.5.0 source/binary. Existing original-app data is untouched.
+The new release and Prismo Apps site carry the APK. See its package receipt for
+the exact hash, size and signer. Physical Android installation remains untested.
+
+The following sections are historical records of earlier deliveries.
+
 ## 25 October 2026: reproducible Android preview
 
 [Field Kit Preview 0.3.3-preview.1](ANDROID_PREVIEW.md) builds the available 0.3.3

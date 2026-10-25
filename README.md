@@ -8,18 +8,17 @@ analysis on your computer.
 
 | App | Download | Status |
 | --- | --- | --- |
+| Android Planner 0.5.1 | [Prismo Apps download page](https://prismo-apps.jeremiah651574.chatgpt.site/) · [release](https://github.com/DroneWuKong/Field-Kit/releases/tag/android-v0.5.1) · [guide](docs/ANDROID_PLANNER.md) | Reconstructed latest phone planner; Android 8.0+; separate development signing identity |
 | Android Preview 0.3.3-preview.1 | [Download APK](https://github.com/DroneWuKong/Field-Kit/releases/download/android-v0.3.3-preview.1/Prismo-Field-Kit-0.3.3-preview.1.apk) · [preview guide](docs/ANDROID_PREVIEW.md) | Rebuilt current assets; separate installation and development signer; Android 8.0+ |
 | Android 0.5.0 | APK supplied directly to the owner · 4.4 MB; [installation guide](docs/ANDROID.md) | Signed development build; Android 8.0+; no public download yet |
 | Windows x64 · Horizon 0.2.0 | [Download ZIP · about 80 MiB](https://github.com/DroneWuKong/Field-Kit/releases/download/horizon-v0.2.0-windows/Prismo-Field-Kit-Horizon-0.2.0-windows-x64.zip) | Published portable preview; executable is unsigned |
 
-The preview is a new build of the available 0.3.3 assets, with tools, Practice,
-records and desktop plan exchange. It installs as **Field Kit Preview** beside
-the original app. It does not include the missing 0.5.0 mobile map planner.
-The original 0.5.0 APK has not been published as a public GitHub release.
-[Release and source status](docs/RELEASE_STATUS.md) distinguishes the
-available downloads from the code currently on `main`. The Android 0.5.0 and
-Horizon 0.3.0 source changes are not present on GitHub; the unpublished checkout
-was removed by workspace maintenance. The delivered Android APK is preserved.
+**0.5.1 is the current Android planner**, reconstructed from the documented 0.5.0
+behavior after its source checkout was lost. It opens the map and supports saved
+routes, reusable equipment, offline PMTiles and JSON export. It updates the separate
+0.3.3 preview package and installs beside the original app; original app data is
+not migrated automatically. See [release/source status](docs/RELEASE_STATUS.md).
+The exact original 0.5.0 and Horizon 0.3.0 source commits remain unrecovered.
 
 ## Android: open the map and plan
 
@@ -34,7 +33,7 @@ was removed by workspace maintenance. The delivered Android APK is preserved.
 5. Export a Prismo plan to Horizon for terrain-aware analysis. Open **Tools** for
    the existing Field Kit checks, records and configuration practice.
 
-[Android installation, offline maps and troubleshooting](docs/ANDROID.md).
+[Android installation, offline maps and troubleshooting](docs/ANDROID_PLANNER.md).
 The phone planner saves route drafts and assumptions locally. It does not run
 Horizon’s terrain engine or produce new terrain-aware coverage predictions.
 
@@ -94,6 +93,8 @@ with prepared terrain and datum grids. Existing data stays in
 | --- | --- |
 | `apps/horizon/` | Horizon 0.2.0 desktop planner and terrain service |
 | `source/assets/tools/` | Field Kit 0.3.3 web assets and vendored runtime |
+| `source/assets/mobile/` | Reconstructed 0.5.1 phone map planner |
+| `app/` | Native Android shell, permissions, file picker and passive diagnostics |
 | `packages/contracts/` | Shared equipment/plan schemas and fixtures |
 | `scripts/` | Desktop packaging, web build and contract generation |
 | `tests/` | Configuration, browser, exchange and package checks |

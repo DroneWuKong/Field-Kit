@@ -1,0 +1,15 @@
+{
+  "apk": "Prismo-Field-Kit-0.5.1.apk",
+  "sha256": "91c42c7980d2997a1c522e79b364f039ce14d54d72e93e5b18cc2990702f1253",
+  "bytes": 2428389,
+  "package": "com.dronewukong.fieldtools.preview",
+  "version": "0.5.1",
+  "versionCode": 10,
+  "certificate_sha256": "7778d1e7642e2554efd4cc7bf7dc04455abe957de779473939cd6f9048dc6fd0",
+  "signature_verified": true,
+  "alignment_verified": true,
+  "debuggable": false,
+  "assets_verified": 53,
+  "physical_configuration_writes": false,
+  "device_installation_tested": false
+}

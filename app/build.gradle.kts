@@ -7,8 +7,8 @@ android {
         applicationId = "com.dronewukong.fieldtools.preview"
         minSdk = 26
         targetSdk = 35
-        versionCode = 6
-        versionName = "0.3.3-preview.1"
+        versionCode = 10
+        versionName = "0.5.1"
     }
     sourceSets.getByName("main").assets.srcDir("../source/assets")
     buildFeatures { buildConfig = true }

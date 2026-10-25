@@ -1,5 +1,13 @@
 # Build and test
 
+The current native build is [Android Planner 0.5.1](ANDROID_PLANNER.md), reconstructed
+from the missing planner's documented behavior. `npm test` now includes the phone
+planner browser suite. Build with JDK 17, Android SDK 35 and
+`./gradlew :app:assembleRelease :app:lintRelease`; validate the signed APK with
+`tests/validate-native-package.py`. It retains the separate preview package/signer.
+
+The sections below describe earlier baseline builds and desktop checks.
+
 The native Android rebuild is documented in [Android Preview](ANDROID_PREVIEW.md).
 Run `./gradlew :app:assembleRelease :app:lintRelease` with JDK 17 and Android SDK 35.
 The preview uses current 0.3.3 assets and a separate application ID/signing identity.

@@ -7,7 +7,8 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "npm run test:model && npm run test:ui && npm run test:regression && npm run test:exchange",
+    "test": "npm run test:model && npm run test:ui && npm run test:regression && npm run test:exchange && npm run test:mobile",
+    "test:mobile": "node tests/mobile-planner.cjs",
     "test:model": "node --test tests/configuration-model.cjs",
     "test:ui": "node tests/configuration-ui.cjs",
     "test:regression": "node tests/retired-tool-regression.cjs",

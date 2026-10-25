@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10212b"><title>Field Kit · Map planner</title>
+<link rel="stylesheet" href="vendor/maplibre-gl.css"><link rel="stylesheet" href="planner.css">
+</head><body>
+<header><div><strong>FIELD KIT</strong><span id="version">0.5.1 · Planner</span></div><a href="../tools/tools_offline.html?mode=standalone#home">Tools ↗</a></header>
+<main id="map" aria-label="Route planning map"></main>
+<div class="map-actions"><button id="locate" aria-label="Find my location">◎ Locate</button><button id="fit">Show route</button><button id="done" hidden>Done placing</button></div>
+<div id="message" role="status" aria-live="polite">Opening map…</div>
+<nav aria-label="Planner"><button data-panel="route">Route</button><button data-panel="equipment">Equipment</button><button data-panel="offline">Offline maps</button></nav>
+<dialog id="sheet"><div class="sheet-head"><h1 id="sheet-title"></h1><button id="close" aria-label="Close panel">✕</button></div><p id="panel-message" role="status" hidden></p><div id="content"></div></dialog>
+<input id="import-plan" type="file" accept=".json,application/json" hidden>
+<input id="import-map" type="file" accept=".pmtiles" hidden>
+<script src="../tools/prismo-contracts.js"></script><script src="planner-model.js"></script><script src="vendor/pmtiles.js"></script>
+<script type="module" src="planner.js"></script>
+</body></html>
